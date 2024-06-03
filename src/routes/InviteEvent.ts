@@ -3,18 +3,23 @@ import { iEventReq, voteReq } from '../types/Request';
 import { createIEvent, iEventVoted, iEventVoteNeg, iEventVotePos } from '../tools/iEvent';
 import { CtxErr, DbErr, errCode, intCode } from '../types/Error';
 import { verifyToken } from '../tools/token';
+import { createInvite } from '../tools/invite';
+import { InviteModel } from '@prisma/client';
 export const iEventRouter = express.Router();
 
 iEventRouter.post('/create', async (req, res) => {
     let requestInfo: iEventReq;
 
-    if (req.body.discordId && req.body.invite && req.body.duration) requestInfo = req.body as iEventReq;
-    else if (!req.body.discordId && req.body.invite) return res.status(400).json({ error: 'DiscordId missing', code: errCode.MISSINGVALUES } as CtxErr)
+    if (req.body.discordId && req.body.duration) requestInfo = req.body as iEventReq;
+    else if (!req.body.discordId) return res.status(400).json({ error: 'DiscordId missing', code: errCode.MISSINGVALUES } as CtxErr)
     else return res.status(400).json({ error: 'Values missing.', code: errCode.MISSINGVALUES } as CtxErr);
 
-    requestInfo.duration = Number(requestInfo.duration)
+    if(!requestInfo.duration) requestInfo.duration = 1440
+    else requestInfo.duration = Number(requestInfo.duration)
 
-    const result = await createIEvent((Math.random() * 10).toString(36).replace('.', ''), requestInfo.discordId, 'ArX6zAcu', requestInfo.duration)
+    const invite = await createInvite(requestInfo.discordId) as InviteModel
+
+    const result = await createIEvent((Math.random() * 10).toString(36).replace('.', ''), requestInfo.discordId, invite.invite , requestInfo.duration)
 
     res.status(200).send(result)
 });

@@ -15,7 +15,7 @@ export enum errCode {
 }
 
 export interface DbErr {
-    error?: string,
+    error?: any,
     model: string,
     target: string[],
     code: intCode,

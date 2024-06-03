@@ -16,11 +16,18 @@ datasource db {
 model User {
   discordId     String         @id
   invite        String         @unique
+  inviteModel   InviteModel?   @relation(fields: [invite], references: [invite])
   token         String         @unique
   iEvent        InviteEvent?   @relation(fields: [iEventId], references: [eventId])
   iEventId      String?        @unique
   positiveVotes PositiveVote[]
   negativeVotes NegativeVote[]
+}
+
+model InviteModel {
+  invite    String @id
+  discordId String @unique
+  user      User?
 }
 
 model InviteEvent {

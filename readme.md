@@ -2,7 +2,7 @@
 
 Messy project, dont try to make sense of it
 
-- Implement actual Oceanic.js code to create Invites (hopefully once this is done I finally push to github)
+- Implement actual Oceanic.js code to create Invites DONE
 
 - Fix login, as it is currently disabled
 
