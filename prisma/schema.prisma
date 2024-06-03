@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  discordId     String         @id
+  invite        String         @unique
+  token         String         @unique
+  iEvent        InviteEvent?   @relation(fields: [iEventId], references: [eventId])
+  iEventId      String?        @unique
+  positiveVotes PositiveVote[]
+  negativeVotes NegativeVote[]
+}
+
+model InviteEvent {
+  eventId       String         @id
+  discordId     String
+  user          User?
+  invite        String         @unique
+  ended         Boolean
+  createdAt     DateTime       @default(now())
+  duration      Int
+  positiveVotes PositiveVote[]
+  negativeVotes NegativeVote[]
+}
+
+model PositiveVote {
+  id        Int         @id @default(autoincrement())
+  userToken String
+  iEventId  String
+  user      User        @relation(fields: [userToken], references: [token])
+  iEvent    InviteEvent @relation(fields: [iEventId], references: [eventId])
+  createdAt DateTime    @default(now())
+
+  @@unique([userToken])
+}
+
+model NegativeVote {
+  id        Int         @id @default(autoincrement())
+  userToken String
+  iEventId  String
+  user      User        @relation(fields: [userToken], references: [token])
+  iEvent    InviteEvent @relation(fields: [iEventId], references: [eventId])
+  createdAt DateTime    @default(now())
+
+  @@unique([userToken])
+}
