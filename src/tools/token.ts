@@ -17,7 +17,7 @@ export async function createToken(discordId: string, invite: string, inviteEvent
 
         return result as User;
     } catch (error) {
-        if(error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode, error: error } as DbErr
+        if(error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta as unknown as Array<string>, code: error.code as unknown as intCode, error: error } as DbErr
     }
 }
 

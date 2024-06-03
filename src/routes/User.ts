@@ -2,7 +2,7 @@
 import express from 'express';
 import { RegisterReq } from '../types/Request';
 import { checkForToken, createToken } from '../tools/token';
-import { CtxErr, errCode } from '../types/Error';
+import { CtxErr, DbErr, errCode, intCode } from '../types/Error';
 export const userRouter = express.Router();
 
 userRouter.post('/register', async (req, res) => {
@@ -15,9 +15,11 @@ userRouter.post('/register', async (req, res) => {
 
     const isUser = await checkForToken(requestInfo.discordId)
 
-    if(isUser) return res.status(409).send({ error: 'Account already exists with that ID', code: errCode.ALREADYEXIST }  as CtxErr)
+    if (isUser) return res.status(409).send({ error: 'Account already exists with that ID', code: errCode.ALREADYEXIST } as CtxErr)
 
     const user = await createToken(requestInfo.discordId, requestInfo.invite)
+
+    if ((user as DbErr).code === intCode.P2003) return res.status(403).json({ error: 'Invite is invalid', code: errCode.INVALIDINVITE })
 
     res.status(200).send(user)
 });

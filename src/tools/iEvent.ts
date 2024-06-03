@@ -4,6 +4,96 @@ import { DbErr, intCode } from "../types/Error";
 import { InviteEvent } from "../types/Event";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
+export async function createCEvent(discordId: string, token: string) {
+    const alreadyExist = await findCEvent(discordId)
+
+    if (alreadyExist) return await voteCEvent(discordId, token)
+    else {
+        try {
+            const result = await prisma.createInviteEvent.create({
+                data: {
+                    discordId: discordId,
+                    createVote: {
+                        create: {
+                            userToken: token
+                        }
+                    }
+                },
+            });
+
+            return result;
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
+        }
+    }
+}
+
+export async function findCEvent(discordId: string) {
+    try {
+        const result = await prisma.createInviteEvent.findUnique({
+            where: {
+                discordId: discordId,
+            }
+        })
+
+        return result
+    } catch (error) {
+        console.log(error)
+        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
+        else console.log(error)
+    }
+}
+
+export async function findCVote(discordId: string, token: string) {
+    try {
+        const result = await prisma.createVote.findUnique({
+            where: {
+                discordId: discordId,
+                userToken: token
+            }
+        })
+
+        return result
+    } catch (error) {
+        console.log(error)
+        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
+        else console.log(error)
+    }
+}
+
+export async function countCVote(discordId: string) {
+    try {
+        const result = await prisma.createVote.count({
+            where: {
+                discordId: discordId
+            }
+        })
+
+        return result
+    } catch (error) {
+        console.log(error)
+        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
+        else console.log(error)
+    }
+}
+
+export async function voteCEvent(discordId: string, token: string) {
+    try {
+        const result = await prisma.createVote.create({
+            data: {
+                userToken: token,
+                discordId: discordId
+            }
+        })
+
+        return result
+    } catch (error) {
+        console.log(error)
+        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
+        else console.log(error)
+    }
+}
+
 export async function createIEvent(eventId: string, discordId: string, invite: string, duration: number) {
     try {
         const result = await prisma.inviteEvent.create({
@@ -50,6 +140,20 @@ export async function findIEvent(eventId: string) {
     }
 }
 
+export async function findIEventById(discordId: string) {
+    try {
+        const result = await prisma.inviteEvent.findMany({
+            where: {
+                discordId: discordId
+            },
+        });
+
+        return result as InviteEvent[];
+    } catch (error) {
+        Logger.error(error);
+    }
+}
+
 export async function iEventVotePos(eventId: string, token: string) {
     try {
         const result = await prisma.positiveVote.create({
@@ -86,15 +190,15 @@ export async function iEventVoteNeg(eventId: string, token: string) {
 
 export async function iEventVoted(eventId: string, token: string) {
     try {
-        const negative = await prisma.negativeVote.create({
-            data: {
+        const negative = await prisma.negativeVote.findUnique({
+            where: {
                 userToken: token,
                 iEventId: eventId
             }
         })
 
-        const positive = await prisma.positiveVote.create({
-            data: {
+        const positive = await prisma.positiveVote.findUnique({
+            where: {
                 userToken: token,
                 iEventId: eventId
             }

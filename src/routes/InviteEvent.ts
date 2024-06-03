@@ -1,28 +1,64 @@
 import express from 'express';
 import { iEventReq, voteReq } from '../types/Request';
-import { createIEvent, iEventVoted, iEventVoteNeg, iEventVotePos } from '../tools/iEvent';
+import { countCVote, createCEvent, createIEvent, findCVote, findIEvent, findIEventById, iEventVoted, iEventVoteNeg, iEventVotePos } from '../tools/iEvent';
 import { CtxErr, DbErr, errCode, intCode } from '../types/Error';
 import { verifyToken } from '../tools/token';
 import { createInvite } from '../tools/invite';
-import { InviteModel } from '@prisma/client';
+import { CreateVote, InviteModel } from '@prisma/client';
 export const iEventRouter = express.Router();
 
-iEventRouter.post('/create', async (req, res) => {
-    let requestInfo: iEventReq;
+// iEventRouter.post('/create', async (req, res) => {
+//     let requestInfo: iEventReq;
 
-    if (req.body.discordId && req.body.duration) requestInfo = req.body as iEventReq;
-    else if (!req.body.discordId) return res.status(400).json({ error: 'DiscordId missing', code: errCode.MISSINGVALUES } as CtxErr)
-    else return res.status(400).json({ error: 'Values missing.', code: errCode.MISSINGVALUES } as CtxErr);
+//     if (req.body.discordId && req.body.duration) requestInfo = req.body as iEventReq;
+//     else if (!req.body.discordId) return res.status(400).json({ error: 'DiscordId missing', code: errCode.MISSINGVALUES } as CtxErr)
+//     else return res.status(400).json({ error: 'Values missing.', code: errCode.MISSINGVALUES } as CtxErr);
 
-    if(!requestInfo.duration) requestInfo.duration = 1440
-    else requestInfo.duration = Number(requestInfo.duration)
+//     if(!requestInfo.duration) requestInfo.duration = 1440
+//     else requestInfo.duration = Number(requestInfo.duration)
 
-    const invite = await createInvite(requestInfo.discordId) as InviteModel
+//     const invite = await createInvite(requestInfo.discordId) as InviteModel
 
-    const result = await createIEvent((Math.random() * 10).toString(36).replace('.', ''), requestInfo.discordId, invite.invite , requestInfo.duration)
+//     const result = await createIEvent((Math.random() * 10).toString(36).replace('.', ''), requestInfo.discordId, invite.invite , requestInfo.duration)
 
-    res.status(200).send(result)
-});
+//     res.status(200).send(result)
+// });
+
+iEventRouter.post('/vote', async (req, res) => {
+    if (!req.body.discordId) {
+        return res.status(400).json({ error: 'DiscordId missing', code: errCode.MISSINGVALUES } as CtxErr);
+    }
+
+    if (!req.body.token) {
+        return res.status(400).json({ error: 'Token missing', code: errCode.MISSINGVALUES } as CtxErr);
+    }
+
+    let requestInfo: iEventReq = req.body as iEventReq;
+
+    const validToken = await verifyToken(requestInfo.token)
+
+    if (!validToken) return res.status(401).json({ error: 'Token not valid', code: errCode.INVALIDTOKEN })
+
+    const checkVotes = await countCVote(requestInfo.discordId)
+
+    // const alreadyExists = await findIEventById(requestInfo.discordId)
+
+    if(checkVotes as number > 1) {
+        const invite = await createInvite(requestInfo.discordId) as InviteModel
+
+        const result = await createIEvent((Math.random() * 10).toString(36).replace('.', ''), requestInfo.discordId, invite.invite , Number(process.env.IDURATION))
+
+        return res.status(200).json(result)
+    }
+    
+    const alreadyVoted = await findCVote(requestInfo.discordId, requestInfo.token)
+
+    if((alreadyVoted as CreateVote).id) return res.status(406).json({ error: 'Vote already cast. Ignored', code: errCode.ALREADYVOTED })
+
+    const result = createCEvent(requestInfo.discordId, requestInfo.token)
+
+    res.status(200).json(result)
+})
 
 iEventRouter.post('/vote/positive', async (req, res) => {
     let requestInfo: voteReq;

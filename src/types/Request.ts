@@ -4,9 +4,9 @@ export interface RegisterReq {
 }
 
 export interface iEventReq {
+    duration?: number;
     discordId: string,
-    invite: string,
-    duration: number,
+    token: string,
 }
 
 export interface voteReq {

@@ -11,6 +11,7 @@ export enum errCode {
     MISSINGVALUES = 'MISSINGVALUES',
     INVALIDVALUES = 'INVALIDVALUES',
     INVALIDTOKEN = 'INVALIDTOKEN',
+    INVALIDINVITE = 'INVALIDINVITE',
     ALREADYVOTED = 'ALREADYVOTED'
 }
 
@@ -22,5 +23,6 @@ export interface DbErr {
 }
 
 export enum intCode {
-    P2002 = "P2002"
+    P2002 = "P2002",
+    P2003 = "P2003"
 }
