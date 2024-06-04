@@ -1,13 +1,9 @@
-import Logger from "js-logger";
-import { prisma } from "..";
-import { DbErr, intCode } from "../types/Error";
-import { InviteEvent } from "../types/Event";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { InviteEvent } from "@prisma/client";
+import prisma from "../prisma/client";
+import { DatabaseError } from "../errors/DatabaseError";
 
 export async function createCEvent(discordId: string, token: string) {
-    const alreadyExist = await findCEvent(discordId)
-
-    if (alreadyExist) return await voteCEvent(discordId, token)
+    if (await findCEvent(discordId)) return await voteCEvent(discordId, token)
     else {
         try {
             const result = await prisma.createInviteEvent.create({
@@ -23,7 +19,7 @@ export async function createCEvent(discordId: string, token: string) {
 
             return result;
         } catch (error) {
-            if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
+            throw new DatabaseError('Could not create CEvent', error as Error)
         }
     }
 }
@@ -38,9 +34,7 @@ export async function findCEvent(discordId: string) {
 
         return result
     } catch (error) {
-        console.log(error)
-        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
-        else console.log(error)
+        throw new DatabaseError('Could not find unique discordId', error as Error)
     }
 }
 
@@ -55,9 +49,7 @@ export async function findCVote(discordId: string, token: string) {
 
         return result
     } catch (error) {
-        console.log(error)
-        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
-        else console.log(error)
+        throw new DatabaseError('Could not find unique CVote', error as Error)
     }
 }
 
@@ -71,9 +63,7 @@ export async function countCVote(discordId: string) {
 
         return result
     } catch (error) {
-        console.log(error)
-        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
-        else console.log(error)
+        throw new DatabaseError('Could not count CVotes', error as Error)
     }
 }
 
@@ -86,11 +76,9 @@ export async function voteCEvent(discordId: string, token: string) {
             }
         })
 
-        return result
+        return { discordId }
     } catch (error) {
-        console.log(error)
-        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
-        else console.log(error)
+        throw new DatabaseError('Could not vote on CEvent', error as Error)
     }
 }
 
@@ -108,7 +96,7 @@ export async function createIEvent(eventId: string, discordId: string, invite: s
 
         return result as InviteEvent;
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
+        throw new DatabaseError('Could not create IEvent', error as Error) 
     }
 }
 
@@ -122,7 +110,7 @@ export async function deleteIEvent(eventId: string) {
 
         return result as InviteEvent;
     } catch (error) {
-        Logger.error(error);
+        throw new DatabaseError('Could not delete IEvent', error as Error)
     }
 }
 
@@ -136,7 +124,7 @@ export async function findIEvent(eventId: string) {
 
         return result as InviteEvent;
     } catch (error) {
-        Logger.error(error);
+        throw new DatabaseError('Could not find IEvent', error as Error)
     }
 }
 
@@ -150,7 +138,7 @@ export async function findIEventById(discordId: string) {
 
         return result as InviteEvent[];
     } catch (error) {
-        Logger.error(error);
+        throw new DatabaseError('Could not find unique discordId', error as Error)
     }
 }
 
@@ -165,9 +153,7 @@ export async function iEventVotePos(eventId: string, token: string) {
 
         return result
     } catch (error) {
-        console.log(error)
-        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
-        else console.log(error)
+        throw new DatabaseError('Could not create iEventVotePos', error as Error)
     }
 }
 
@@ -182,9 +168,7 @@ export async function iEventVoteNeg(eventId: string, token: string) {
 
         return result
     } catch (error) {
-        console.log(error)
-        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
-        else console.log(error)
+        throw new DatabaseError('Could not create iEventVoteNeg', error as Error)
     }
 }
 
@@ -207,9 +191,7 @@ export async function iEventVoted(eventId: string, token: string) {
         if (!positive && !negative) return false
         else return true
     } catch (error) {
-        console.log(error)
-        if (error instanceof PrismaClientKnownRequestError) return { model: error.meta?.modelName as string, target: error.meta?.target as Array<string>, code: error.code as unknown as intCode } as DbErr
-        else console.log(error)
+        throw new DatabaseError('Could not accomplish request', error as Error)
     }
 }
 
@@ -232,5 +214,19 @@ export async function checkAndUpdateEventStatus() {
                 data: { ended: true }
             })
         }
+    }
+}
+
+export async function getAllIEvent(active: boolean) {
+    try {
+        const result = await prisma.inviteEvent.findMany({
+            where: {
+                ended: active
+            },
+        });
+
+        return result as InviteEvent[];
+    } catch (error) {
+        throw new DatabaseError('Could not find all IEvents', error as Error)
     }
 }

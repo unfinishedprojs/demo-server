@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -46,37 +46,33 @@ model InviteEvent {
 model PositiveVote {
   id        Int         @id @default(autoincrement())
   userToken String
-  iEventId  String
+  iEventId  String      @unique
   user      User        @relation(fields: [userToken], references: [token])
   iEvent    InviteEvent @relation(fields: [iEventId], references: [eventId])
   createdAt DateTime    @default(now())
-
-  @@unique([userToken])
 }
 
 model NegativeVote {
   id        Int         @id @default(autoincrement())
   userToken String
-  iEventId  String
+  iEventId  String      @unique
   user      User        @relation(fields: [userToken], references: [token])
   iEvent    InviteEvent @relation(fields: [iEventId], references: [eventId])
   createdAt DateTime    @default(now())
-
-  @@unique([userToken])
 }
 
 model CreateInviteEvent {
-  discordId String @unique
+  discordId  String       @unique
   createVote CreateVote[]
 }
 
 model CreateVote {
-  id        Int      @id @default(autoincrement())
+  id        Int               @id @default(autoincrement())
   userToken String
   discordId String
-  user      User     @relation(fields: [userToken], references: [token])
-  cEvent CreateInviteEvent @relation(fields: [discordId], references: [discordId])
-  createdAt DateTime @default(now())
+  user      User              @relation(fields: [userToken], references: [token])
+  cEvent    CreateInviteEvent @relation(fields: [discordId], references: [discordId])
+  createdAt DateTime          @default(now())
 
   @@unique([userToken])
 }
