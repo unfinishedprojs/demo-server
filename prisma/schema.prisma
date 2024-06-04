@@ -20,6 +20,7 @@ model User {
   token         String         @unique
   iEvent        InviteEvent?   @relation(fields: [iEventId], references: [eventId])
   iEventId      String?        @unique
+  admin         Boolean?
   positiveVotes PositiveVote[]
   negativeVotes NegativeVote[]
   createVotes   CreateVote[]
@@ -27,7 +28,7 @@ model User {
 
 model InviteModel {
   invite    String @id
-  discordId String @unique
+  discordId String? @unique
   user      User?
 }
 

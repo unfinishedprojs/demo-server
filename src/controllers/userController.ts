@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { checkForToken, createToken } from '../services/userService';
 import { DatabaseError } from '../errors/DatabaseError';
+import { checkForInvite, inviteInUse } from '../services/inviteService';
 
 export const getUsers = async (req: Request, res: Response) => {
   // const users = await prisma.user.findMany();
@@ -20,12 +21,20 @@ export const createUser = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Invite missing' });
   }
 
+  if(!(await checkForInvite(invite))) {
+    return res.status(409).json({ message: 'No such Invite exists' });
+  }
+
+  if (await inviteInUse(invite)) {
+    return res.status(409).json({ message: 'Invite already in use' });
+  }
+
   if (await checkForToken(discordId, undefined)) {
     return res.status(409).json({ message: 'Account already exists with that ID' });
   }
 
   try {
-    const user = createToken(discordId, invite)
+    const user = await createToken(discordId, invite)
 
     res.status(201).json(user)
   } catch (error) {

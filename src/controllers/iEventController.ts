@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { countCVote, createIEvent, findCVote, createCEvent, iEventVoted, iEventVotePos, iEventVoteNeg, getAllIEvent } from '../services/iEventService';
 import { DatabaseError } from '../errors/DatabaseError';
 import { checkForToken } from '../services/userService';
-import { createInvite } from '../services/discordService';
+import { createInvite } from '../services/inviteService';
 
 export const suggest = async (req: Request, res: Response) => {
     try {
