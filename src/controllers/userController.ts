@@ -11,17 +11,17 @@ export const createUser = async (req: Request, res: Response) => {
   const { discordId, invite } = req.body;
 
   if (!discordId && !invite) {
-    return res.status(400).json({ error: 'Values missing.' });
+    return res.status(400).json({ message: 'Values missing.' });
   }
   if (!discordId) {
-    return res.status(400).json({ error: 'DiscordId missing' });
+    return res.status(400).json({ message: 'DiscordId missing' });
   }
   if (!invite) {
-    return res.status(400).json({ error: 'Invite missing' });
+    return res.status(400).json({ message: 'Invite missing' });
   }
 
   if (await checkForToken(discordId, undefined)) {
-    return res.status(409).json({ error: 'Account already exists with that ID' });
+    return res.status(409).json({ message: 'Account already exists with that ID' });
   }
 
   try {

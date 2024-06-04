@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { suggest, voteNegative, votePositive } from '../controllers/iEventController';
+import { getIEvents, suggest, voteNegative, votePositive } from '../controllers/iEventController';
 
 const router = Router();
 
-// router.get('/', getUsers); // Get all active invite events pls tyvm
+router.get('/', getIEvents); // Get all active invite events pls tyvm
 
 router.post('/suggest', suggest);
 

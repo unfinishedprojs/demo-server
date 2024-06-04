@@ -30,7 +30,7 @@ app.get('/', (req: Request, res: Response) => {
 
 client.on("ready", async () => {
     console.log("Ready as", client.user.tag);
-    client.editStatus("idle", [ { name: 'you explod', state: 'blowing up', type: 1 } as unknown as BotCustomActivity])
+    client.editStatus("idle", [ { name: 'you explod', state: 'blowing up', type: ActivityTypes.LISTENING } as unknown as BotCustomActivity])
 });
 
 client.on("error", (err) => {

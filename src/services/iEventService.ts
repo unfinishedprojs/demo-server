@@ -1,5 +1,4 @@
 import { InviteEvent } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import prisma from "../prisma/client";
 import { DatabaseError } from "../errors/DatabaseError";
 
@@ -77,7 +76,7 @@ export async function voteCEvent(discordId: string, token: string) {
             }
         })
 
-        return result
+        return { discordId }
     } catch (error) {
         throw new DatabaseError('Could not vote on CEvent', error as Error)
     }
@@ -215,5 +214,19 @@ export async function checkAndUpdateEventStatus() {
                 data: { ended: true }
             })
         }
+    }
+}
+
+export async function getAllIEvent(active: boolean) {
+    try {
+        const result = await prisma.inviteEvent.findMany({
+            where: {
+                ended: active
+            },
+        });
+
+        return result as InviteEvent[];
+    } catch (error) {
+        throw new DatabaseError('Could not find all IEvents', error as Error)
     }
 }
