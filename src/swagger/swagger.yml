@@ -1,0 +1,12 @@
+openapi: '3.0.2'
+info:
+  title: DemoServer
+  version: '0.1'
+servers:
+  - url: https://localhost:5000
+paths:
+  /users/create:
+    post:
+      responses:
+        '200':
+          description: OK
