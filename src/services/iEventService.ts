@@ -40,6 +40,10 @@ export async function findCEvent(discordId: string) {
 
 export async function deleteCEvent(discordId: string) {
     try {
+        await prisma.createVote.deleteMany({
+            where: { discordId }
+        });
+
         const result = await prisma.createInviteEvent.delete({
             where: {
                 discordId: discordId,

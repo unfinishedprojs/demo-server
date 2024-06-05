@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx ts-node src/server.ts"
+    "start": "npx ts-node src/server.ts",
+    "migrate": "npx prisma migrate dev --name init"
   },
   "keywords": [],
   "author": "Icia",
