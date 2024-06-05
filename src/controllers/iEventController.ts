@@ -144,9 +144,11 @@ export const voteNegative = async (req: Request, res: Response) => {
 export const getIEvents = async (req: Request, res: Response) => {
     try {
         const { active } = req.body
-        const token = req.headers["Authorization"]
+        const token = req.headers["Authorization"] as string[]
 
-        if(!token) {
+        console.log(token)
+
+        if(!token[0]) {
             return res.status(400).json({ error: 'Token missing' });
         }
 
