@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { countCVote, createIEvent, findCVote, createCEvent, iEventVoted, iEventVotePos, iEventVoteNeg, getAllIEvent } from '../services/iEventService';
+import { countCVote, createIEvent, findCVote, createCEvent, iEventVoted, iEventVotePos, iEventVoteNeg, getAllIEvent, deleteCEvent } from '../services/iEventService';
 import { DatabaseError } from '../errors/DatabaseError';
 import { checkForToken } from '../services/userService';
 import { createInvite } from '../services/inviteService';
@@ -16,11 +16,20 @@ export const suggest = async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'Token missing' });
         }
 
+        if(typeof discordId !== 'string') {
+            return res.status(401).json({ message: 'DiscordId not a string'})
+        }
+
+        if(typeof token !== 'string') {
+            return res.status(401).json({ message: 'Token not a string'})
+        }
+
         if (!(await checkForToken(undefined, token))) {
             return res.status(401).json({ message: 'Token not valid' });
         }
 
         if ((await countCVote(discordId) as number) >= 2) {
+            await deleteCEvent(discordId)
             const invite = await createInvite(discordId);
             const result = await createIEvent(
                 (Math.random() * 10).toString(36).replace('.', ''),
@@ -32,7 +41,7 @@ export const suggest = async (req: Request, res: Response) => {
             return res.status(200).json(result);
         }
 
-        if ((await findCVote(discordId, token))?.id) {
+        if ((await findCVote(discordId, token))?.createdAt) {
             return res.status(406).json({ error: 'Vote already cast. Ignored' });
         }
 
@@ -59,6 +68,14 @@ export const votePositive = async (req: Request, res: Response) => {
 
         if (!token) {
             return res.status(400).json({ message: 'Token missing' });
+        }
+
+        if(typeof eventId !== 'string') {
+            return res.status(401).json({ message: 'eventId not a string'})
+        }
+
+        if(typeof token !== 'string') {
+            return res.status(401).json({ message: 'Token not a string'})
         }
 
         if (!(await checkForToken(undefined, token))) {
@@ -93,6 +110,14 @@ export const voteNegative = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Token missing' });
         }
 
+        if(typeof eventId !== 'string') {
+            return res.status(401).json({ message: 'EventId not a string'})
+        }
+
+        if(typeof token !== 'string') {
+            return res.status(401).json({ message: 'Token not a string'})
+        }
+
         if (!(await checkForToken(undefined, token))) {
             return res.status(401).json({ error: 'Token not valid' })
         }
@@ -119,6 +144,10 @@ export const getIEvents = async (req: Request, res: Response) => {
 
         if(!token) {
             return res.status(400).json({ error: 'Token missing' });
+        }
+
+        if(typeof token !== 'string') {
+            return res.status(401).json({ message: 'Token not a string'})
         }
 
         const result = await getAllIEvent(active as boolean)

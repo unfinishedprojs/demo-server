@@ -68,12 +68,11 @@ model CreateInviteEvent {
 }
 
 model CreateVote {
-  id        Int               @id @default(autoincrement())
   userToken String
   discordId String
   user      User              @relation(fields: [userToken], references: [token])
   cEvent    CreateInviteEvent @relation(fields: [discordId], references: [discordId])
   createdAt DateTime          @default(now())
 
-  @@unique([userToken])
+  @@id([userToken, discordId])
 }

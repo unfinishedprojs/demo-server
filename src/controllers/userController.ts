@@ -21,7 +21,15 @@ export const createUser = async (req: Request, res: Response) => {
     return res.status(400).json({ message: 'Invite missing' });
   }
 
-  if(!(await checkForInvite(invite))) {
+  if (typeof discordId !== 'string') {
+    return res.status(401).json({ message: 'DiscordId not a string' })
+  }
+
+  if (typeof invite !== 'string') {
+    return res.status(401).json({ message: 'Invite not a string' })
+  }
+
+  if (!(await checkForInvite(invite))) {
     return res.status(409).json({ message: 'No such Invite exists' });
   }
 

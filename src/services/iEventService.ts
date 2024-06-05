@@ -38,12 +38,28 @@ export async function findCEvent(discordId: string) {
     }
 }
 
+export async function deleteCEvent(discordId: string) {
+    try {
+        const result = await prisma.createInviteEvent.delete({
+            where: {
+                discordId: discordId,
+            }
+        })
+
+        return result
+    } catch (error) {
+        throw new DatabaseError('Could not find unique discordId', error as Error)
+    }
+}
+
 export async function findCVote(discordId: string, token: string) {
     try {
         const result = await prisma.createVote.findUnique({
             where: {
-                discordId: discordId,
-                userToken: token
+                userToken_discordId: {
+                    discordId: discordId,
+                    userToken: token,
+                }
             }
         })
 
@@ -96,7 +112,7 @@ export async function createIEvent(eventId: string, discordId: string, invite: s
 
         return result as InviteEvent;
     } catch (error) {
-        throw new DatabaseError('Could not create IEvent', error as Error) 
+        throw new DatabaseError('Could not create IEvent', error as Error)
     }
 }
 
