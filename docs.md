@@ -41,9 +41,11 @@ Create a new User. Keep the token secret, and dont lose it!
 
 Fetches all existing Invite Events
 
-#### Request
+#### Headers
 
-- `token` User token generated on register
+- `Authorization` User token generated on register (There has to be ONLY the token in the header, nothing else!)
+
+#### Request
 
 - `ended?` If the event has ended or is ongoing.
     - `true` shows Invite Events that have ended.
@@ -71,9 +73,12 @@ Fetches all existing Invite Events
 
 Suggest a new user to create an Invite Event poll for. Once the server-side defined limit for suggestions is reached, a 24h long Invite Event will be created, which will be returned back in the reply.
 
+#### Headers
+
+- `Authorization` User token generated on register (There has to be ONLY the token in the header, nothing else!)
+
 #### Request
 
-- `token` User token generated on register
 - `discordId` Discord ID of User you want to suggest
 
 #### Response
@@ -105,9 +110,11 @@ If the limit has been reached and the Invite Event has been successfully created
 
 Vote in an Invite Event. There are two endpoints for positive and negative votes.
 
-#### Request
+#### Headers
 
-- `token` User token generated on register
+- `Authorization` User token generated on register (There has to be ONLY the token in the header, nothing else!)
+
+#### Request
 
 - `eventId` ID of Invite Event
 

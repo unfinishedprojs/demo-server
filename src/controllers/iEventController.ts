@@ -6,7 +6,7 @@ import { createInvite } from '../services/inviteService';
 
 export const suggest = async (req: Request, res: Response) => {
     try {
-        const token = req.headers["token"]
+        const token = req.headers["Authorization"]
         const { discordId } = req.body;
 
         if (!discordId) {
@@ -62,7 +62,7 @@ export const suggest = async (req: Request, res: Response) => {
 export const votePositive = async (req: Request, res: Response) => {
     try {
         const { eventId } = req.body;
-        const token = req.headers["token"]
+        const token = req.headers["Authorization"]
 
         if (!eventId) {
             return res.status(400).json({ message: 'eventId missing' });
@@ -102,7 +102,7 @@ export const votePositive = async (req: Request, res: Response) => {
 
 export const voteNegative = async (req: Request, res: Response) => {
     try {
-        const token = req.headers["token"]
+        const token = req.headers["Authorization"]
         const { eventId } = req.body;
 
         if (!eventId) {
@@ -144,7 +144,7 @@ export const voteNegative = async (req: Request, res: Response) => {
 export const getIEvents = async (req: Request, res: Response) => {
     try {
         const { active } = req.body
-        const token = req.headers["token"]
+        const token = req.headers["Authorization"]
 
         if(!token) {
             return res.status(400).json({ error: 'Token missing' });
