@@ -7,6 +7,8 @@ router.get('/', getIEvents); // Get all active invite events pls tyvm
 
 router.post('/suggest', suggest);
 
+// Voting on active IEvents
+
 router.post('/vote/positive', votePositive)
 router.post('/vote/negative', voteNegative)
 

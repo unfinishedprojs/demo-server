@@ -9,6 +9,7 @@ import morgan from 'morgan';
 import yaml from 'yaml'
 import fs from 'fs'
 import { checkAndUpdateEventStatus } from './services/iEventService';
+import cors from 'cors';
 
 export const env = process.env;
 
@@ -20,6 +21,7 @@ const swaggerDocument = yaml.parse(file)
 export const client = new Client({ auth: env.BOT_AUTH })
 
 app.use(express.json());
+app.use(cors())
 app.use('/api/users', userRoutes);
 app.use('/api/ievents', iEventRoutes)
 app.use('/api/admin', adminRoutes)
