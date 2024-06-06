@@ -11,3 +11,5 @@ Democracy Server Voting Infra: backend
     - any other breaking changes will go on v2, v3 etc.
 - [x] Make Token a header
 - [x] Actually count all votes
+- [ ] Get user info on CVote and Register
+- [ ] Tie Invites so that you have to use a specific ID with that Invite (currently not implemented so that everyone can debug their program)
