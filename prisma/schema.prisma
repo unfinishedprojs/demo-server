@@ -45,21 +45,21 @@ model InviteEvent {
 }
 
 model PositiveVote {
-  id        Int         @id @default(autoincrement())
   userToken String
   iEventId  String      @unique
   user      User        @relation(fields: [userToken], references: [token])
   iEvent    InviteEvent @relation(fields: [iEventId], references: [eventId])
   createdAt DateTime    @default(now())
+  @@id([userToken, iEventId])
 }
 
 model NegativeVote {
-  id        Int         @id @default(autoincrement())
   userToken String
   iEventId  String      @unique
   user      User        @relation(fields: [userToken], references: [token])
   iEvent    InviteEvent @relation(fields: [iEventId], references: [eventId])
   createdAt DateTime    @default(now())
+  @@id([userToken, iEventId])
 }
 
 model CreateInviteEvent {

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { checkForToken, createToken } from '../services/userService';
 import { DatabaseError } from '../errors/DatabaseError';
 import { checkForInvite, inviteInUse } from '../services/inviteService';
+import { ApiResponse, LoginRes } from '../models/interfaces';
 
 export const getUsers = async (req: Request, res: Response) => {
   // const users = await prisma.user.findMany();
@@ -42,9 +43,9 @@ export const createUser = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = await createToken(discordId, invite)
+    const result = await createToken(discordId, invite)
 
-    res.status(201).json(user)
+    return res.status(201).json({ discordId: result.discordId, token: result.token, admin: result.admin } as LoginRes);
   } catch (error) {
     if (error instanceof DatabaseError) {
       console.error('Database error occurred:', error.cause);
@@ -55,3 +56,29 @@ export const createUser = async (req: Request, res: Response) => {
     }
   }
 };
+
+export const login = async (req: Request, res: Response) => {
+  try {
+    const token = req.headers.authorization
+
+    if (!token) {
+      return res.status(400).json({ message: 'Token missing' });
+    }
+
+    if (typeof token !== 'string') {
+      return res.status(401).json({ message: 'Token not a string' })
+    }
+
+    const result = await checkForToken(undefined, token);
+
+    return res.status(200).json({ discordId: result.discordId, token: result.token, admin: result.admin } as LoginRes);
+  } catch (error) {
+    if (error instanceof DatabaseError) {
+      console.error('Database error occurred:', error.cause);
+      res.status(500).json({ message: error.message });
+    } else {
+      console.error('Unexpected error:', error);
+      res.status(500).json({ message: 'An unexpected error occurred' });
+    }
+  }
+}

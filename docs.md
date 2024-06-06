@@ -35,6 +35,24 @@ Create a new User. Keep the token secret, and dont lose it!
 }
 ```
 
+### POST (`/login`)
+
+#### Headers
+
+- `Authorization` User token generated on register (There has to be ONLY the token in the header, nothing else!)
+
+#### Response
+
+```json
+{
+    "discordId": string,
+    "token": string,
+    "admin": boolean
+}
+```
+
+NOTE: `admin` might not be defined at all
+
 ## Invite Events (`/api/ievents`)
 
 ### GET (`/`)

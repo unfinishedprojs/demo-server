@@ -3,6 +3,7 @@ import { countCVote, createIEvent, findCVote, createCEvent, iEventVoted, iEventV
 import { DatabaseError } from '../errors/DatabaseError';
 import { checkForToken } from '../services/userService';
 import { createInvite } from '../services/inviteService';
+import { ApiResponse, EventRes } from '../models/interfaces';
 
 export const suggest = async (req: Request, res: Response) => {
     try {
@@ -17,12 +18,12 @@ export const suggest = async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'Token missing' });
         }
 
-        if(typeof discordId !== 'string') {
-            return res.status(401).json({ message: 'DiscordId not a string'})
+        if (typeof discordId !== 'string') {
+            return res.status(401).json({ message: 'DiscordId not a string' })
         }
 
-        if(typeof token !== 'string') {
-            return res.status(401).json({ message: 'Token not a string'})
+        if (typeof token !== 'string') {
+            return res.status(401).json({ message: 'Token not a string' })
         }
 
         if (!(await checkForToken(undefined, token))) {
@@ -39,7 +40,16 @@ export const suggest = async (req: Request, res: Response) => {
                 Number(process.env.IDURATION)
             );
 
-            return res.status(200).json(result);
+            return res.status(200).json({
+                status: 200,
+                response: {
+                    eventId: result.eventId,
+                    discordId: result.discordId,
+                    createdAt: result.createdAt,
+                    duration: result.duration,
+                    ended: result.ended
+                } as EventRes
+            } as ApiResponse);
         }
 
         if ((await findCVote(discordId, token))?.createdAt) {
@@ -47,7 +57,9 @@ export const suggest = async (req: Request, res: Response) => {
         }
 
         const result = await createCEvent(discordId, token);
-        return res.status(200).json(result);
+        return res.status(200).json({
+                discordId: result.discordId
+            });
     } catch (error) {
         if (error instanceof DatabaseError) {
             console.error('Database error occurred:', error.cause);
@@ -72,12 +84,12 @@ export const votePositive = async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'Token missing' });
         }
 
-        if(typeof eventId !== 'string') {
-            return res.status(401).json({ message: 'eventId not a string'})
+        if (typeof eventId !== 'string') {
+            return res.status(401).json({ message: 'eventId not a string' })
         }
 
-        if(typeof token !== 'string') {
-            return res.status(401).json({ message: 'Token not a string'})
+        if (typeof token !== 'string') {
+            return res.status(401).json({ message: 'Token not a string' })
         }
 
         if (!(await checkForToken(undefined, token))) {
@@ -88,7 +100,12 @@ export const votePositive = async (req: Request, res: Response) => {
             return res.status(406).json({ message: 'Vote already cast. Ignored' })
         }
 
-        res.status(200).json(await iEventVotePos(eventId, token))
+        const result = await iEventVotePos(eventId, token)
+
+        res.status(200).json({
+                iEventId: result.iEventId,
+                createdAt: result.createdAt
+            })
     } catch (error) {
         if (error instanceof DatabaseError) {
             console.error('Database error occurred:', error.cause);
@@ -113,12 +130,12 @@ export const voteNegative = async (req: Request, res: Response) => {
             return res.status(400).json({ error: 'Token missing' });
         }
 
-        if(typeof eventId !== 'string') {
-            return res.status(401).json({ message: 'EventId not a string'})
+        if (typeof eventId !== 'string') {
+            return res.status(401).json({ message: 'EventId not a string' })
         }
 
-        if(typeof token !== 'string') {
-            return res.status(401).json({ message: 'Token not a string'})
+        if (typeof token !== 'string') {
+            return res.status(401).json({ message: 'Token not a string' })
         }
 
         if (!(await checkForToken(undefined, token))) {
@@ -129,7 +146,12 @@ export const voteNegative = async (req: Request, res: Response) => {
             return res.status(406).json({ error: 'Vote already cast. Ignored' })
         }
 
-        res.status(200).json(await iEventVoteNeg(eventId, token))
+        const result = await iEventVoteNeg(eventId, token)
+
+        res.status(200).json({
+                iEventId: result.iEventId,
+                createdAt: result.createdAt
+            })
     } catch (error) {
         if (error instanceof DatabaseError) {
             console.error('Database error occurred:', error.cause);
@@ -146,17 +168,26 @@ export const getIEvents = async (req: Request, res: Response) => {
         const { active } = req.body
         const token = req.headers.authorization
 
-        if(!token) {
+        if (!token) {
             return res.status(400).json({ error: 'Token missing' });
         }
 
-        if(typeof token !== 'string') {
-            return res.status(401).json({ message: 'Token not a string'})
+        if (typeof token !== 'string') {
+            return res.status(401).json({ message: 'Token not a string' })
         }
 
-        const result = await getAllIEvent(active as boolean)
+        if (!await checkForToken(undefined, token)) {
+            return res.status(409).json({ message: 'No account with that token exists' });
+          }
 
-        return res.status(200).json(result)
+        let result: any = await getAllIEvent(active as boolean)
+
+        result = result.map((item: { [x: string]: any; invite: any; }) => {
+            const { invite, ...rest } = item;
+            return rest;
+          });
+
+        return res.status(200).json({ events: result })
     } catch (error) {
         if (error instanceof DatabaseError) {
             console.error('Database error occurred:', error.cause);
