@@ -71,6 +71,10 @@ export const login = async (req: Request, res: Response) => {
 
     const result = await checkForToken(undefined, token);
 
+    if(!result) {
+      return res.status(403).json({ message: 'Token is invalid'})
+    }
+
     return res.status(200).json({ discordId: result.discordId, token: result.token, admin: result.admin } as LoginRes);
   } catch (error) {
     if (error instanceof DatabaseError) {
