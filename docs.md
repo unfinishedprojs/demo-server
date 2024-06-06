@@ -58,7 +58,7 @@ NOTE: `admin` might not be defined at all
 
 ## Invite Events (`/api/ievents`)
 
-### GET (`/`)
+### GET (`/api/ievents`)
 
 Fetches all existing Invite Events
 
@@ -90,7 +90,7 @@ Fetches all existing Invite Events
 ]
 ```
 
-### POST (`/api/suggest`)
+### POST (`/api/ievents/suggest`)
 
 Suggest a new user to create an Invite Event poll for. Once the server-side defined limit for suggestions is reached, a 24h long Invite Event will be created, which will be returned back in the reply.
 
@@ -127,7 +127,7 @@ If the limit has been reached and the Invite Event has been successfully created
 }
 ```
 
-### POST (`/api/vote/positive`) (`/api/vote/negative`)
+### POST (`/api/ievents/vote/positive`) (`/api/ievents/vote/negative`)
 
 Vote in an Invite Event. There are two endpoints for positive and negative votes.
 
