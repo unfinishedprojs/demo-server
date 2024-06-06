@@ -1,6 +1,7 @@
 # API Documentation
 
 All currently available endpoints for the API. All endpoint responses are going to change, except for the main info you will most likely need. 
+All requests start with `/api`
 
 ### Error Responses
 
@@ -12,9 +13,9 @@ If the status of a Response isnt in the 200 range, its an error.
 }
 ```
 
-## Users (`/users`)
+## Users (`/api/users`)
 
-### POST (`/register`)
+### POST (`/api/users/register`)
 
 Create a new User. Keep the token secret, and dont lose it!
 
@@ -35,7 +36,7 @@ Create a new User. Keep the token secret, and dont lose it!
 }
 ```
 
-### POST (`/verify`)
+### POST (`/api/users/verify`)
 
 Verify if a token is a valid token, and gives you some information about the user attached to the token
 
@@ -89,7 +90,7 @@ Fetches all existing Invite Events
 ]
 ```
 
-### POST (`/suggest`)
+### POST (`/api/suggest`)
 
 Suggest a new user to create an Invite Event poll for. Once the server-side defined limit for suggestions is reached, a 24h long Invite Event will be created, which will be returned back in the reply.
 
@@ -126,7 +127,7 @@ If the limit has been reached and the Invite Event has been successfully created
 }
 ```
 
-### POST (`/vote/positive`) (`/vote/negative`)
+### POST (`/api/vote/positive`) (`/api/vote/negative`)
 
 Vote in an Invite Event. There are two endpoints for positive and negative votes.
 
