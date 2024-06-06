@@ -10,3 +10,4 @@ Democracy Server Voting Infra: backend
     - new fields can go on the same api version, but:
     - any other breaking changes will go on v2, v3 etc.
 - [x] Make Token a header
+- [x] Actually count all votes

@@ -84,8 +84,8 @@ Fetches all existing Invite Events
         "ended": boolean,
         "createdAt": Date,
         "duration": Int,
-        "positiveVotes": Int,
-        "negativeVotes": Int
+        "positiveVotesInt": Int,
+        "negativeVotesInt": Int
     }
 ]
 ```

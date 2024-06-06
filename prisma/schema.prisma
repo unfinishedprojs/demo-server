@@ -27,21 +27,23 @@ model User {
 }
 
 model InviteModel {
-  invite    String @id
+  invite    String  @id
   discordId String? @unique
   user      User?
 }
 
 model InviteEvent {
-  eventId       String         @id
-  discordId     String
-  user          User?
-  invite        String         @unique
-  ended         Boolean
-  createdAt     DateTime       @default(now())
-  duration      Int
-  positiveVotes PositiveVote[]
-  negativeVotes NegativeVote[]
+  eventId          String         @id
+  discordId        String
+  user             User?
+  invite           String         @unique
+  ended            Boolean
+  createdAt        DateTime       @default(now())
+  duration         Int
+  positiveVotesInt Int
+  negativeVotesInt Int
+  positiveVotes    PositiveVote[]
+  negativeVotes    NegativeVote[]
 }
 
 model PositiveVote {
@@ -50,6 +52,7 @@ model PositiveVote {
   user      User        @relation(fields: [userToken], references: [token])
   iEvent    InviteEvent @relation(fields: [iEventId], references: [eventId])
   createdAt DateTime    @default(now())
+
   @@id([userToken, iEventId])
 }
 
@@ -59,6 +62,7 @@ model NegativeVote {
   user      User        @relation(fields: [userToken], references: [token])
   iEvent    InviteEvent @relation(fields: [iEventId], references: [eventId])
   createdAt DateTime    @default(now())
+
   @@id([userToken, iEventId])
 }
 

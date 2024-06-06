@@ -110,7 +110,9 @@ export async function createIEvent(eventId: string, discordId: string, invite: s
                 discordId: discordId,
                 invite: invite,
                 duration: duration,
-                ended: false
+                ended: false,
+                positiveVotesInt: 0,
+                negativeVotesInt: 0
             },
         });
 
@@ -171,6 +173,15 @@ export async function iEventVotePos(eventId: string, token: string) {
             }
         })
 
+        await prisma.inviteEvent.update({
+            where: { eventId },
+            data: {
+                positiveVotesInt: {
+                    increment: 1,
+                },
+            },
+        });
+
         return result
     } catch (error) {
         throw new DatabaseError('Could not create iEventVotePos', error as Error)
@@ -185,6 +196,15 @@ export async function iEventVoteNeg(eventId: string, token: string) {
                 iEventId: eventId
             }
         })
+
+        await prisma.inviteEvent.update({
+            where: { eventId },
+            data: {
+                negativeVotesInt: {
+                    increment: 1,
+                },
+            },
+        });
 
         return result
     } catch (error) {
