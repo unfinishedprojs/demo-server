@@ -35,7 +35,9 @@ Create a new User. Keep the token secret, and dont lose it!
 }
 ```
 
-### POST (`/login`)
+### POST (`/verify`)
+
+Verify if a token is a valid token, and gives you some information about the user attached to the token
 
 #### Headers
 
