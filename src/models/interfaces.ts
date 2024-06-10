@@ -5,24 +5,24 @@ export interface User {
 }
 
 export interface SuggestionResponse {
-  discordId: string
+  discordId: string;
 }
 
 export interface ApiResponse {
-  status: number,
-  response: LoginRes | object
+  status: number;
+  response: LoginRes | object;
 }
 
 export interface LoginRes {
-  discordId: string,
-  token: string,
-  admin?: boolean
+  discordId: string;
+  token: string;
+  admin?: boolean;
 }
 
 export interface EventRes {
-  eventId: string,
-  discordId: string,
-  ended?: boolean,
-  createdAt: Date,
-  duration: number
+  eventId: string;
+  discordId: string;
+  ended?: boolean;
+  createdAt: Date;
+  duration: number;
 }

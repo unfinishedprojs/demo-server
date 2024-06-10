@@ -1,6 +1,6 @@
 # API Documentation
 
-All currently available endpoints for the API. All endpoint responses are going to change, except for the main info you will most likely need. 
+All currently available endpoints for the API. All endpoint responses are going to change, except for the main info you will most likely need.
 All requests start with `/api`
 
 ### Error Responses
@@ -69,9 +69,9 @@ Fetches all existing Invite Events
 #### Request
 
 - `ended?` If the event has ended or is ongoing.
-    - `true` shows Invite Events that have ended.
-    - `false` shows Invite Events that are currently actively ongoing
-    - leaving this blank shows all Invite Events, regardless if they have ended or not
+  - `true` shows Invite Events that have ended.
+  - `false` shows Invite Events that are currently actively ongoing
+  - leaving this blank shows all Invite Events, regardless if they have ended or not
 
 #### Response
 
