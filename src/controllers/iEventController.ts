@@ -9,6 +9,7 @@ import {
   iEventVoteNeg,
   getAllIEvent,
   deleteCEvent,
+  findIEvent,
 } from "../services/iEventService";
 import { DatabaseError } from "../errors/DatabaseError";
 import { checkForToken } from "../services/userService";
@@ -47,7 +48,7 @@ export const suggest = async (req: Request, res: Response) => {
         (Math.random() * 10).toString(36).replace(".", ""),
         discordId,
         invite.invite,
-        Number(process.env.IDURATION),
+        Number(process.env.IDURATION)
       );
 
       return res.status(200).json({
@@ -130,7 +131,7 @@ export const votePositive = async (req: Request, res: Response) => {
 export const voteNegative = async (req: Request, res: Response) => {
   try {
     const token = req.headers.authorization;
-    const { eventId } = req.body;
+    const { eventId } = req.query;
 
     if (!eventId) {
       return res.status(400).json({ error: "eventId missing" });
@@ -200,6 +201,55 @@ export const getIEvents = async (req: Request, res: Response) => {
     });
 
     return res.status(200).json({ events: result });
+  } catch (error) {
+    if (error instanceof DatabaseError) {
+      console.error("Database error occurred:", error.cause);
+      res.status(500).json({ message: error.message });
+    } else {
+      console.error("Unexpected error:", error);
+      res.status(500).json({ message: "An unexpected error occurred" });
+    }
+  }
+};
+
+export const getIEvent = async (req: Request, res: Response) => {
+  try {
+    const { eventId } = req.query;
+    const token = req.headers.authorization;
+
+    if (!token) {
+      return res.status(400).json({ error: "Token missing" });
+    }
+
+    if (typeof token !== "string") {
+      return res.status(401).json({ message: "Token not a string" });
+    }
+
+    if (!eventId) {
+      return res.status(400).json({ error: "EventID missing" });
+    }
+
+    if (typeof eventId !== "string") {
+      return res.status(401).json({ message: "EventID not a string" });
+    }
+
+    if (!(await checkForToken(undefined, token))) {
+      return res
+        .status(409)
+        .json({ message: "No account with that token exists" });
+    }
+
+    let result = await findIEvent(eventId as string);
+
+    return res.status(200).json({
+      eventId: result.eventId,
+      discordId: result.discordId,
+      ended: result.ended,
+      createdAt: result.createdAt,
+      duration: result.duration,
+      positiveVotesInt: result.positiveVotesInt,
+      negativeVotesInt: result.negativeVotesInt,
+    });
   } catch (error) {
     if (error instanceof DatabaseError) {
       console.error("Database error occurred:", error.cause);

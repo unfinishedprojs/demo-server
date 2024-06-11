@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getIEvent,
   getIEvents,
   suggest,
   voteNegative,
@@ -9,6 +10,7 @@ import {
 const router = Router();
 
 router.get("/", getIEvents); // Get all active invite events pls tyvm
+router.get("/get", getIEvent);
 
 router.post("/suggest", suggest);
 
