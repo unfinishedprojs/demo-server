@@ -35,6 +35,9 @@ model InviteModel {
 model InviteEvent {
   eventId          String         @id
   discordId        String
+  discordUser      String?
+  discordSlug      String?
+  discordPicture   String?
   user             User?
   invite           String         @unique
   ended            Boolean

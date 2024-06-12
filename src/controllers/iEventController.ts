@@ -131,7 +131,7 @@ export const votePositive = async (req: Request, res: Response) => {
 export const voteNegative = async (req: Request, res: Response) => {
   try {
     const token = req.headers.authorization;
-    const { eventId } = req.query;
+    const { eventId } = req.body;
 
     if (!eventId) {
       return res.status(400).json({ error: "eventId missing" });
@@ -244,6 +244,9 @@ export const getIEvent = async (req: Request, res: Response) => {
     return res.status(200).json({
       eventId: result.eventId,
       discordId: result.discordId,
+      discordUser: result.discordUser,
+      discordPicture: result.discordPicture,
+      discordSlug: result.discordSlug,
       ended: result.ended,
       createdAt: result.createdAt,
       duration: result.duration,

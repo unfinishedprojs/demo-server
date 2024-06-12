@@ -1,6 +1,7 @@
 import { InviteEvent } from "@prisma/client";
 import prisma from "../prisma/client";
 import { DatabaseError } from "../errors/DatabaseError";
+import { getDiscordData } from "./generateService";
 
 export async function createCEvent(discordId: string, token: string) {
   if (await findCEvent(discordId)) return await voteCEvent(discordId, token);
@@ -109,9 +110,14 @@ export async function createIEvent(
   duration: number,
 ) {
   try {
+    const user = await getDiscordData(discordId)
+
     const result = await prisma.inviteEvent.create({
       data: {
         eventId: eventId,
+        discordUser: user.globalName,
+        discordSlug: user.username,
+        discordPicture: user.avatarURL(),
         discordId: discordId,
         invite: invite,
         duration: duration,
