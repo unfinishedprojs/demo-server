@@ -176,11 +176,12 @@ Will be written when there is enough of a difference from v1
 
 # Updates
 
-## 1.1.0 (b)
+## 1.1.0 (b & c)
 
 - Add all v1 endpoints to their appropriate place, to make way for v2 endpoints.
 - Move documentation to readme.md, as people cant find it trolley
 - (b) Fix issue with prisma
+- (c) Fix issue with https
 
 ## 1.0.1
 
