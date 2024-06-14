@@ -24,6 +24,12 @@ model User {
   positiveVotes PositiveVote[]
   negativeVotes NegativeVote[]
   createVotes   CreateVote[]
+
+  // New v2 data
+
+  discordUser      String?
+  discordSlug      String?
+  discordPicture   String?
 }
 
 model InviteModel {

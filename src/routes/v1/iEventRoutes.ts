@@ -5,7 +5,7 @@ import {
   suggest,
   voteNegative,
   votePositive,
-} from "../controllers/iEventController";
+} from "../../controllers/v1/iEventController";
 
 const router = Router();
 

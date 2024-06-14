@@ -1,14 +1,22 @@
 import express, { Application, Request, Response } from "express";
-import userRoutesV1 from "./routes/userRoutes";
-import iEventRoutesV1 from "./routes/iEventRoutes";
-import adminRoutesV1 from "./routes/adminRoutes";
+
+// v1 Imports
+import userRoutesV1 from "./routes/v1/userRoutes";
+import iEventRoutesV1 from "./routes/v1/iEventRoutes";
+import adminRoutesV1 from "./routes/v1/adminRoutes";
+
+// v2 Imports
+import userRoutesV2 from "./routes/v2/userRoutes";
+import iEventRoutesV2 from "./routes/v2/iEventRoutes";
+import adminRoutesV2 from "./routes/v2/adminRoutes";
+
 import swaggerUi from "swagger-ui-express";
 import { ActivityTypes, BotCustomActivity, Client } from "oceanic.js";
 import cron from "node-cron";
 import morgan from "morgan";
 import yaml from "yaml";
 import fs from "fs";
-import { checkAndUpdateEventStatus } from "./services/iEventService";
+import { checkAndUpdateEventStatus } from "./services/v1/iEventService";
 import cors from "cors";
 
 export const env = process.env;
@@ -22,9 +30,19 @@ export const client = new Client({ auth: env.BOT_AUTH });
 
 app.use(express.json());
 app.use(cors());
+
+// V1 Routes
+
 app.use("/api/v1/users", userRoutesV1);
 app.use("/api/v1/ievents", iEventRoutesV1);
 app.use("/api/v1/admin", adminRoutesV1);
+
+// V2 Routes
+
+app.use("/api/v2/users", userRoutesV2);
+app.use("/api/v2/ievents", iEventRoutesV2);
+app.use("/api/v2/admin", adminRoutesV2);
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(morgan("tiny"));
 

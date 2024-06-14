@@ -1,4 +1,4 @@
-import { client } from "../app";
+import { client } from "../../app";
 
 export function toBase64(string: string) {
   return Buffer.from(string).toString("base64");

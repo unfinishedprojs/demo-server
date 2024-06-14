@@ -2,14 +2,17 @@
 
 Democracy Server Voting Infra: backend
 
+## Versioning rules
+
+- First digit: Major update that changes most endpoints in a breaking way
+- Second digit: New features that add to the endpoints in a non-breaking way
+- Third digit: Bug patches
+
 ## TODO
 
 - [ ] When CEvent is finished, check if IEvent already exists. If it does, check if it ended. If it ended and is positive, do not allow new CEvents for user. If it ended and is negative, allow new CEvents for user
 - [x] Modify Response so that it doesn't leak backend info
-- [ ] version api - add v0 (experimental api for now, until main frontend is done)
-  - [ ] when done, copy rename to v1 and drop v0 support (frontend get's updated too)
-  - new fields can go on the same api version, but:
-  - any other breaking changes will go on v2, v3 etc.
+- [x] version api - add v1
 - [x] Make Token a header
 - [x] Actually count all votes
 - [ ] Get user info on CVote and Register
@@ -167,9 +170,18 @@ Vote in an Invite Event. There are two endpoints for positive and negative votes
 }
 ```
 
+# API Documentation (v2)
+
+Will be written when there is enough of a difference from v1
+
 # Updates
 
 ## 1.1.0
 
 - Add all v1 endpoints to their appropriate place, to make way for v2 endpoints.
 - Move documentation to readme.md, as people cant find it trolley
+
+## 1.0.1
+
+- Organized all files in v1 and v2
+- Fix errors being weirdos

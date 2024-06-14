@@ -1,6 +1,6 @@
-import { client } from "../app";
-import prisma from "../prisma/client";
-import { DatabaseError } from "../errors/DatabaseError";
+import { client } from "../../app";
+import { prismaV1 as prisma } from "../../prisma/client";
+import { DatabaseError } from "../../errors/DatabaseError";
 
 export async function createInvite(discordId?: string) {
   const invite = await client.rest.channels.createInvite(
