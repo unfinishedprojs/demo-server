@@ -1,5 +1,5 @@
 import { client } from "../../app";
-import { prismaV1 as prisma } from "../../prisma/client";
+import { prisma } from "../../prisma/client";
 import { DatabaseError } from "../../errors/DatabaseError";
 
 export async function createInvite(discordId?: string) {

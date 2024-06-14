@@ -1,5 +1,5 @@
 import { InviteEvent } from "@prisma/client";
-import { prismaV1 as prisma } from "../../prisma/client";
+import { prisma } from "../../prisma/client";
 import { DatabaseError } from "../../errors/DatabaseError";
 import { getDiscordData } from "./generateService";
 

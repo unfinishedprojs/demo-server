@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-import { prismaV1 as prisma } from "../../prisma/client";
+import { prisma } from "../../prisma/client";
 import { toBase64 } from "./generateService";
 import { DatabaseError } from "../../errors/DatabaseError";
 
