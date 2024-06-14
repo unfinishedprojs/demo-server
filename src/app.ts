@@ -1,7 +1,7 @@
 import express, { Application, Request, Response } from "express";
-import userRoutes from "./routes/userRoutes";
-import iEventRoutes from "./routes/iEventRoutes";
-import adminRoutes from "./routes/adminRoutes";
+import userRoutesV1 from "./routes/userRoutes";
+import iEventRoutesV1 from "./routes/iEventRoutes";
+import adminRoutesV1 from "./routes/adminRoutes";
 import swaggerUi from "swagger-ui-express";
 import { ActivityTypes, BotCustomActivity, Client } from "oceanic.js";
 import cron from "node-cron";
@@ -22,9 +22,9 @@ export const client = new Client({ auth: env.BOT_AUTH });
 
 app.use(express.json());
 app.use(cors());
-app.use("/api/users", userRoutes);
-app.use("/api/ievents", iEventRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api/v1/users", userRoutesV1);
+app.use("/api/v1/ievents", iEventRoutesV1);
+app.use("/api/v1/admin", adminRoutesV1);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(morgan("tiny"));
 
