@@ -29,7 +29,7 @@ If the status of a Response isnt in the 200 range, its an error.
 
 ```json
 {
-    "message": string
+    "error": string
 }
 ```
 
