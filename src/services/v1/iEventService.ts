@@ -107,10 +107,10 @@ export async function createIEvent(
   eventId: string,
   discordId: string,
   invite: string,
-  duration: number,
+  duration: number
 ) {
   try {
-    const user = await getDiscordData(discordId)
+    const user = await getDiscordData(discordId);
 
     const result = await prisma.inviteEvent.create({
       data: {
@@ -227,15 +227,19 @@ export async function iEventVoted(eventId: string, token: string) {
   try {
     const negative = await prisma.negativeVote.findUnique({
       where: {
-        userToken: token,
-        iEventId: eventId,
+        userToken_iEventId: {
+          userToken: token,
+          iEventId: eventId,
+        },
       },
     });
 
     const positive = await prisma.positiveVote.findUnique({
       where: {
-        userToken: token,
-        iEventId: eventId,
+        userToken_iEventId: {
+          userToken: token,
+          iEventId: eventId,
+        },
       },
     });
 

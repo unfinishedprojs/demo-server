@@ -227,15 +227,19 @@ export async function iEventVoted(eventId: string, token: string) {
   try {
     const negative = await prisma.negativeVote.findUnique({
       where: {
-        userToken: token,
-        iEventId: eventId,
+        userToken_iEventId: {
+          userToken: token,
+          iEventId: eventId,
+        },
       },
     });
 
     const positive = await prisma.positiveVote.findUnique({
       where: {
-        userToken: token,
-        iEventId: eventId,
+        userToken_iEventId: {
+          userToken: token,
+          iEventId: eventId,
+        },
       },
     });
 

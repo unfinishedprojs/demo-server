@@ -46,7 +46,7 @@ app.use("/api/v2/ievents", iEventRoutesV2);
 app.use("/api/v2/admin", adminRoutesV2);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use(morgan("tiny"));
+app.use(morgan("dev"));
 
 app.get("/", (req: Request, res: Response) => {
   res.send("API is running...");
