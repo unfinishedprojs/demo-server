@@ -27,7 +27,7 @@ export const suggest = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "DiscordId not a string" });
     }
 
-    if (((await countCVote(discordId)) as number) > 1) {
+    if (((await countCVote(discordId)) as number + 1) >= 1) {
       await deleteCEvent(discordId);
       const invite = await createInvite(discordId);
       const result = await createIEvent(

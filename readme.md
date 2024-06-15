@@ -176,6 +176,10 @@ Will be written when I get the motivation to do so
 
 # Updates
 
+## 2.0.4
+
+- Hopefully patch CEvents taking too many votes to create
+
 ## 2.0.3
 
 - Correct spelling mistake that TS didnt catch
