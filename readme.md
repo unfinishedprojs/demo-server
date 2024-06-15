@@ -176,6 +176,10 @@ Will be written when I get the motivation to do so
 
 # Updates
 
+## 2.0.3
+
+- Correct spelling mistake that TS didnt catch
+
 ## 2.0.2
 
 - Vaporize some console logging
