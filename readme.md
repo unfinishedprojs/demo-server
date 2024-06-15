@@ -176,6 +176,10 @@ Will be written when I get the motivation to do so
 
 # Updates
 
+## 2.0.1
+
+- Added Admin authentication
+
 ## 2.0.0 (Breaking)
 
 - Switch to password-based login

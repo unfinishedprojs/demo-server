@@ -125,7 +125,7 @@ export const login = async (req: Request, res: Response) => {
       return res.status(403).json({ error: "Password or username is incorrect" });
     }
 
-    const token = jwt.sign({ id: user.discordId, password: user.token }, env.private as string, { expiresIn: '24h' });
+    const token = jwt.sign({ id: user.discordId, password: user.token, admin: user.admin }, env.private as string, { expiresIn: '24h' });
 
     return res.status(200).json({
       token,

@@ -1,24 +1,9 @@
 import { Request, Response } from "express";
-import { checkForToken } from "../../services/v2/userService";
 import { DatabaseError } from "../../errors/DatabaseError";
 import { createInvite } from "../../services/v2/inviteService";
 
 export const createInvites = async (req: Request, res: Response) => {
-  const { token, quantity } = req.body;
-
-  if (!token) {
-    return res.status(400).json({ error: "No token defined" });
-  }
-
-  const user = await checkForToken(undefined, token);
-
-  if (!user) {
-    return res.status(404).json({ error: "Admin Token doesnt exist" });
-  }
-
-  if (!user.admin) {
-    return res.status(409).json({ error: "Not an Admin Token" });
-  }
+  const { quantity } = req.body;
 
   try {
     const invites: string[] = [];
