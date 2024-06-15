@@ -15,7 +15,9 @@ export interface ApiResponse {
 
 export interface LoginRes {
   discordId: string;
-  token: string;
+  discordSlug: string;
+  discordUser: string;
+  discordPfpUrl: string;
   admin?: boolean;
 }
 
@@ -24,5 +26,6 @@ export interface EventRes {
   discordId: string;
   ended?: boolean;
   createdAt: Date;
+  endsAt: Date;
   duration: number;
 }

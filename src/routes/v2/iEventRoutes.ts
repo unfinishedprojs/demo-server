@@ -6,17 +6,18 @@ import {
   voteNegative,
   votePositive,
 } from "../../controllers/v2/iEventController";
+import { verifyToken } from "../../middleware/authentication";
 
 const router = Router();
 
-router.get("/", getIEvents); // Get all active invite events pls tyvm
-router.get("/get", getIEvent);
+router.get("/", verifyToken, getIEvents); // Get all active invite events pls tyvm
+router.get("/get", verifyToken, getIEvent);
 
-router.post("/suggest", suggest);
+router.post("/suggest", verifyToken, suggest);
 
 // Voting on active IEvents
 
-router.post("/vote/positive", votePositive);
-router.post("/vote/negative", voteNegative);
+router.post("/vote/positive", verifyToken, votePositive);
+router.post("/vote/negative", verifyToken, voteNegative);
 
 export default router;

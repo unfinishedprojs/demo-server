@@ -12,33 +12,19 @@ import {
   findIEvent,
 } from "../../services/v2/iEventService";
 import { DatabaseError } from "../../errors/DatabaseError";
-import { checkForToken } from "../../services/v2/userService";
 import { createInvite } from "../../services/v2/inviteService";
 import { ApiResponse, EventRes } from "../../models/interfaces";
 
 export const suggest = async (req: Request, res: Response) => {
   try {
-    const token = req.headers.authorization;
     const { discordId } = req.body;
 
     if (!discordId) {
       return res.status(400).json({ error: "DiscordId missing" });
     }
 
-    if (!token) {
-      return res.status(400).json({ error: "Token missing" });
-    }
-
     if (typeof discordId !== "string") {
       return res.status(401).json({ error: "DiscordId not a string" });
-    }
-
-    if (typeof token !== "string") {
-      return res.status(401).json({ error: "Token not a string" });
-    }
-
-    if (!(await checkForToken(undefined, token))) {
-      return res.status(401).json({ error: "Token not valid" });
     }
 
     if (((await countCVote(discordId)) as number) > 1) {
@@ -57,17 +43,18 @@ export const suggest = async (req: Request, res: Response) => {
           eventId: result.eventId,
           discordId: result.discordId,
           createdAt: result.createdAt,
+          endsAt: result.endsAt,
           duration: result.duration,
           ended: result.ended,
         } as EventRes,
       } as ApiResponse);
     }
 
-    if ((await findCVote(discordId, token))?.createdAt) {
+    if ((await findCVote(discordId, req.body.password))?.createdAt) {
       return res.status(406).json({ error: "Vote already cast. Ignored" });
     }
 
-    const result = await createCEvent(discordId, token);
+    const result = await createCEvent(discordId, req.body.password);
     return res.status(200).json({
       discordId: result.discordId,
     });
@@ -84,34 +71,21 @@ export const suggest = async (req: Request, res: Response) => {
 
 export const votePositive = async (req: Request, res: Response) => {
   try {
-    const { eventId } = req.body;
-    const token = req.headers.authorization;
+    const { eventId, password } = req.body;
 
     if (!eventId) {
       return res.status(400).json({ error: "eventId missing" });
-    }
-
-    if (!token) {
-      return res.status(400).json({ error: "Token missing" });
     }
 
     if (typeof eventId !== "string") {
       return res.status(401).json({ error: "eventId not a string" });
     }
 
-    if (typeof token !== "string") {
-      return res.status(401).json({ error: "Token not a string" });
-    }
-
-    if (!(await checkForToken(undefined, token))) {
-      return res.status(401).json({ error: "Token not valid" });
-    }
-
-    if ((await iEventVoted(eventId, token)) === true) {
+    if ((await iEventVoted(eventId, password)) === true) {
       return res.status(406).json({ error: "Vote already cast. Ignored" });
     }
 
-    const result = await iEventVotePos(eventId, token);
+    const result = await iEventVotePos(eventId, password);
 
     res.status(200).json({
       iEventId: result.iEventId,
@@ -130,34 +104,21 @@ export const votePositive = async (req: Request, res: Response) => {
 
 export const voteNegative = async (req: Request, res: Response) => {
   try {
-    const token = req.headers.authorization;
-    const { eventId } = req.body;
+    const { eventId, password } = req.body;
 
     if (!eventId) {
       return res.status(400).json({ error: "eventId missing" });
-    }
-
-    if (!token) {
-      return res.status(400).json({ error: "Token missing" });
     }
 
     if (typeof eventId !== "string") {
       return res.status(401).json({ error: "EventId not a string" });
     }
 
-    if (typeof token !== "string") {
-      return res.status(401).json({ error: "Token not a string" });
-    }
-
-    if (!(await checkForToken(undefined, token))) {
-      return res.status(401).json({ error: "Token not valid" });
-    }
-
-    if ((await iEventVoted(eventId, token)) === true) {
+    if ((await iEventVoted(eventId, password)) === true) {
       return res.status(406).json({ error: "Vote already cast. Ignored" });
     }
 
-    const result = await iEventVoteNeg(eventId, token);
+    const result = await iEventVoteNeg(eventId, password);
 
     res.status(200).json({
       iEventId: result.iEventId,
@@ -176,26 +137,17 @@ export const voteNegative = async (req: Request, res: Response) => {
 
 export const getIEvents = async (req: Request, res: Response) => {
   try {
-    const { active } = req.body;
-    const token = req.headers.authorization;
+    const { active } = req.query;
 
-    if (!token) {
-      return res.status(400).json({ error: "Token missing" });
-    }
+    let isActive: boolean | undefined = /^true$/i.test(active as string);
 
-    if (typeof token !== "string") {
-      return res.status(401).json({ error: "Token not a string" });
-    }
+    if (!active) isActive = undefined;
 
-    if (!(await checkForToken(undefined, token))) {
-      return res
-        .status(409)
-        .json({ error: "No account with that token exists" });
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let result: any = await getAllIEvent(isActive as boolean | undefined);
 
-    let result: any = await getAllIEvent(active as boolean);
-
-    result = result.map((item: { [x: string]: any; invite: any }) => {
+    result = result.map((item: { [x: string]: unknown; invite: unknown; }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { invite, ...rest } = item;
       return rest;
     });
@@ -215,15 +167,6 @@ export const getIEvents = async (req: Request, res: Response) => {
 export const getIEvent = async (req: Request, res: Response) => {
   try {
     const { eventId } = req.query;
-    const token = req.headers.authorization;
-
-    if (!token) {
-      return res.status(400).json({ error: "Token missing" });
-    }
-
-    if (typeof token !== "string") {
-      return res.status(401).json({ error: "Token not a string" });
-    }
 
     if (!eventId) {
       return res.status(400).json({ error: "EventID missing" });
@@ -233,22 +176,17 @@ export const getIEvent = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "EventID not a string" });
     }
 
-    if (!(await checkForToken(undefined, token))) {
-      return res
-        .status(409)
-        .json({ error: "No account with that token exists" });
-    }
-
-    let result = await findIEvent(eventId as string);
+    const result = await findIEvent(eventId as string);
 
     return res.status(200).json({
       eventId: result.eventId,
       discordId: result.discordId,
       discordUser: result.discordUser,
-      discordPicture: result.discordPicture,
+      discordPfpUrl: result.discordPfpUrl,
       discordSlug: result.discordSlug,
       ended: result.ended,
       createdAt: result.createdAt,
+      endsAt: result.endsAt,
       duration: result.duration,
       positiveVotesInt: result.positiveVotesInt,
       negativeVotesInt: result.negativeVotesInt,

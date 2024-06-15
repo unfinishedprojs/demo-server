@@ -1,18 +1,28 @@
 import { Request, Response } from "express";
-import { checkForToken, createToken } from "../../services/v2/userService";
+import { createPasswordToken, getUserViaId } from "../../services/v2/userService";
 import { DatabaseError } from "../../errors/DatabaseError";
 import { checkForInvite, inviteInUse } from "../../services/v2/inviteService";
-import { ApiResponse, LoginRes } from "../../models/interfaces";
+import { LoginRes } from "../../models/interfaces";
+import * as argon2 from "argon2";
+import jwt from 'jsonwebtoken';
+import { env } from "../../app";
 
-export const getUsers = async (req: Request, res: Response) => {
-  // const users = await prisma.user.findMany();
-  res.json("trolled");
+export const getUser = async (req: Request, res: Response) => {
+  const user = await getUserViaId(req.body.discordId);
+
+  return res.status(200).json({
+    discordId: user.discordId,
+    admin: user.admin,
+    discordUser: user.discordUser,
+    discordSlug: user.discordSlug,
+    discordPfpUrl: user.discordPfpUrl,
+  } as LoginRes);
 };
 
 export const createUser = async (req: Request, res: Response) => {
-  const { discordId, invite } = req.body;
+  const { discordId, password, invite } = req.body;
 
-  if (!discordId && !invite) {
+  if (!discordId && !invite && !invite) {
     return res.status(400).json({ error: "Values missing." });
   }
   if (!discordId) {
@@ -20,6 +30,9 @@ export const createUser = async (req: Request, res: Response) => {
   }
   if (!invite) {
     return res.status(400).json({ error: "Invite missing" });
+  }
+  if (!password) {
+    return res.status(400).json({ error: "Password missing" });
   }
 
   if (typeof discordId !== "string") {
@@ -30,30 +43,37 @@ export const createUser = async (req: Request, res: Response) => {
     return res.status(401).json({ error: "Invite not a string" });
   }
 
-  if (!(await checkForInvite(invite))) {
-    return res.status(409).json({ error: "No such Invite exists" });
-  }
-
-  if (await inviteInUse(invite)) {
-    return res.status(409).json({ error: "Invite already in use" });
-  }
-
-  if (await checkForToken(discordId, undefined)) {
-    return res
-      .status(409)
-      .json({ error: "Account already exists with that ID" });
+  if (typeof password !== "string") {
+    return res.status(401).json({ error: "Password not a string" });
   }
 
   try {
-    const result = await createToken(discordId, invite);
+    const inviteExists = await checkForInvite(invite);
+    if (!inviteExists) {
+      return res.status(409).json({ error: "No such Invite exists" });
+    }
 
+    const isInviteInUse = await inviteInUse(invite);
+    if (isInviteInUse) {
+      return res.status(409).json({ error: "Invite already in use" });
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
     return res
-      .status(201)
-      .json({
-        discordId: result.discordId,
-        token: result.token,
-        admin: result.admin,
-      } as LoginRes);
+      .status(500)
+      .json({ error: "Server error", details: err.message });
+  }
+
+  try {
+    const result = await createPasswordToken(discordId, password, invite);
+
+    return res.status(201).json({
+      discordId: result.discordId,
+      admin: result.admin,
+      discordUser: result.discordUser,
+      discordSlug: result.discordSlug,
+      discordPfpUrl: result.discordPfpUrl,
+    } as LoginRes);
   } catch (error) {
     if (error instanceof DatabaseError) {
       console.error("Database error occurred:", error.cause);
@@ -67,29 +87,54 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const token = req.headers.authorization;
+    const { discordId, password } = req.body;
 
-    if (!token) {
-      return res.status(400).json({ error: "Token missing" });
+    if (!discordId && !password) {
+      return res.status(400).json({ error: "Values missing." });
+    }
+    if (!discordId) {
+      return res.status(400).json({ error: "DiscordId missing" });
+    }
+    if (!password) {
+      return res.status(400).json({ error: "Invite missing" });
     }
 
-    if (typeof token !== "string") {
-      return res.status(401).json({ error: "Token not a string" });
+    if (typeof discordId !== "string") {
+      return res.status(401).json({ error: "DiscordId not a string" });
     }
 
-    const result = await checkForToken(undefined, token);
-
-    if (!result) {
-      return res.status(403).json({ error: "Token is invalid" });
+    if (typeof password !== "string") {
+      return res.status(401).json({ error: "Invite not a string" });
     }
 
-    return res
-      .status(200)
-      .json({
-        discordId: result.discordId,
-        token: result.token,
-        admin: result.admin,
-      } as LoginRes);
+    const user = await getUserViaId(discordId);
+
+    if (!user) {
+      return res.status(403).json({ error: "No user with that Discord ID!" });
+    }
+
+    console.log(user.token);
+
+    console.log(password);
+
+    const ror = await argon2.verify(user.token, password);
+
+    console.log(ror);
+
+    if (!ror) {
+      return res.status(403).json({ error: "Password or username is incorrect" });
+    }
+
+    const token = jwt.sign({ id: user.discordId, password: user.token }, env.private as string, { expiresIn: '24h' });
+
+    return res.status(200).json({
+      token,
+      discordId: user.discordId,
+      admin: user.admin,
+      discordUser: user.discordUser,
+      discordSlug: user.discordSlug,
+      discordPfpUrl: user.discordPfpUrl,
+    } as LoginRes);
   } catch (error) {
     if (error instanceof DatabaseError) {
       console.error("Database error occurred:", error.cause);

@@ -1,7 +1,7 @@
-import { InviteEvent } from "@prisma/client";
 import { prisma } from "../../prisma/client";
 import { DatabaseError } from "../../errors/DatabaseError";
 import { getDiscordData } from "./generateService";
+import { InviteEvent } from "@prisma/client";
 
 export async function createCEvent(discordId: string, token: string) {
   if (await findCEvent(discordId)) return await voteCEvent(discordId, token);
@@ -90,7 +90,7 @@ export async function countCVote(discordId: string) {
 
 export async function voteCEvent(discordId: string, token: string) {
   try {
-    const result = await prisma.createVote.create({
+    await prisma.createVote.create({
       data: {
         userToken: token,
         discordId: discordId,
@@ -110,17 +110,18 @@ export async function createIEvent(
   duration: number,
 ) {
   try {
-    const user = await getDiscordData(discordId)
+    const user = await getDiscordData(discordId);
 
     const result = await prisma.inviteEvent.create({
       data: {
         eventId: eventId,
         discordUser: user.globalName,
         discordSlug: user.username,
-        discordPicture: user.avatarURL(),
+        discordPfpUrl: user.avatarURL(),
         discordId: discordId,
         invite: invite,
         duration: duration,
+        endsAt: new Date((new Date()).getTime() + (60 * 60 * 1000)),
         ended: false,
         positiveVotesInt: 0,
         negativeVotesInt: 0,
@@ -260,8 +261,7 @@ export async function checkAndUpdateEventStatus() {
   });
 
   for (const event of inviteEvents) {
-    const eventEndTime = new Date(event.createdAt);
-    eventEndTime.setMinutes(eventEndTime.getMinutes() + event.duration);
+    const eventEndTime = new Date(event.endsAt);
 
     if (currentTime >= eventEndTime) {
       await prisma.inviteEvent.update({
@@ -272,7 +272,7 @@ export async function checkAndUpdateEventStatus() {
   }
 }
 
-export async function getAllIEvent(active: boolean) {
+export async function getAllIEvent(active: boolean | undefined) {
   try {
     const result = await prisma.inviteEvent.findMany({
       where: {

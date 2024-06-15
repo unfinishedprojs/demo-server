@@ -18,7 +18,7 @@ import yaml from "yaml";
 import fs from "fs";
 import { checkAndUpdateEventStatus } from "./services/v1/iEventService";
 import cors from "cors";
-import helmet from 'helmet'
+import helmet from 'helmet';
 
 export const env = process.env;
 
@@ -30,7 +30,7 @@ const swaggerDocument = yaml.parse(file);
 export const client = new Client({ auth: env.BOT_AUTH });
 
 app.use(cors());
-app.use(helmet())
+app.use(helmet());
 app.use(express.json());
 
 // V1 Routes

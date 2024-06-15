@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { checkForToken, createToken } from "../../services/v1/userService";
 import { DatabaseError } from "../../errors/DatabaseError";
 import { checkForInvite, inviteInUse } from "../../services/v1/inviteService";
-import { ApiResponse, LoginRes } from "../../models/interfaces";
+import { LoginRes } from "../../models/interfaces";
 
 export const getUsers = async (req: Request, res: Response) => {
   // const users = await prisma.user.findMany();
@@ -53,7 +53,7 @@ export const createUser = async (req: Request, res: Response) => {
         discordId: result.discordId,
         token: result.token,
         admin: result.admin,
-      } as LoginRes);
+      } as unknown as LoginRes);
   } catch (error) {
     if (error instanceof DatabaseError) {
       console.error("Database error occurred:", error.cause);
@@ -89,7 +89,7 @@ export const login = async (req: Request, res: Response) => {
         discordId: result.discordId,
         token: result.token,
         admin: result.admin,
-      } as LoginRes);
+      } as unknown as LoginRes);
   } catch (error) {
     if (error instanceof DatabaseError) {
       console.error("Database error occurred:", error.cause);

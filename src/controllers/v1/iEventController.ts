@@ -10,7 +10,7 @@ import {
   getAllIEvent,
   deleteCEvent,
   findIEvent,
-} from "../../services/v1/iEventService";
+} from "../../services/v2/iEventService";
 import { DatabaseError } from "../../errors/DatabaseError";
 import { checkForToken } from "../../services/v1/userService";
 import { createInvite } from "../../services/v1/inviteService";
@@ -193,9 +193,11 @@ export const getIEvents = async (req: Request, res: Response) => {
         .json({ error: "No account with that token exists" });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let result: any = await getAllIEvent(active as boolean);
 
-    result = result.map((item: { [x: string]: any; invite: any }) => {
+    result = result.map((item: { [x: string]: unknown; invite: unknown; }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { invite, ...rest } = item;
       return rest;
     });
@@ -239,13 +241,13 @@ export const getIEvent = async (req: Request, res: Response) => {
         .json({ error: "No account with that token exists" });
     }
 
-    let result = await findIEvent(eventId as string);
+    const result = await findIEvent(eventId as string);
 
     return res.status(200).json({
       eventId: result.eventId,
       discordId: result.discordId,
       discordUser: result.discordUser,
-      discordPicture: result.discordPicture,
+      discordPicture: result.discordPfpUrl,
       discordSlug: result.discordSlug,
       ended: result.ended,
       createdAt: result.createdAt,

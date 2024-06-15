@@ -90,7 +90,7 @@ export async function countCVote(discordId: string) {
 
 export async function voteCEvent(discordId: string, token: string) {
   try {
-    const result = await prisma.createVote.create({
+    await prisma.createVote.create({
       data: {
         userToken: token,
         discordId: discordId,
@@ -117,10 +117,11 @@ export async function createIEvent(
         eventId: eventId,
         discordUser: user.globalName,
         discordSlug: user.username,
-        discordPicture: user.avatarURL(),
+        discordPfpUrl: user.avatarURL(),
         discordId: discordId,
         invite: invite,
         duration: duration,
+        endsAt: new Date((new Date()).getTime() + (60 * 60 * 1000)),
         ended: false,
         positiveVotesInt: 0,
         negativeVotesInt: 0,

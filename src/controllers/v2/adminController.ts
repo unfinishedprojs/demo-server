@@ -21,7 +21,7 @@ export const createInvites = async (req: Request, res: Response) => {
   }
 
   try {
-    let invites: string[] = [];
+    const invites: string[] = [];
 
     for (let index = 0; index < Number(quantity); index++) {
       const invite = await createInvite();

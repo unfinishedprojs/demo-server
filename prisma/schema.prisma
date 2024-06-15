@@ -27,9 +27,9 @@ model User {
 
   // New v2 data
 
-  discordUser      String?
-  discordSlug      String?
-  discordPicture   String?
+  discordUser   String?
+  discordSlug   String?
+  discordPfpUrl String?
 }
 
 model InviteModel {
@@ -42,12 +42,13 @@ model InviteEvent {
   eventId          String         @id
   discordId        String
   discordUser      String?
-  discordSlug      String?
-  discordPicture   String?
+  discordSlug      String
+  discordPfpUrl    String?
   user             User?
   invite           String         @unique
   ended            Boolean
   createdAt        DateTime       @default(now())
+  endsAt           DateTime
   duration         Int
   positiveVotesInt Int
   negativeVotesInt Int
@@ -57,7 +58,7 @@ model InviteEvent {
 
 model PositiveVote {
   userToken String
-  iEventId  String      
+  iEventId  String
   user      User        @relation(fields: [userToken], references: [token])
   iEvent    InviteEvent @relation(fields: [iEventId], references: [eventId])
   createdAt DateTime    @default(now())
@@ -67,7 +68,7 @@ model PositiveVote {
 
 model NegativeVote {
   userToken String
-  iEventId  String      
+  iEventId  String
   user      User        @relation(fields: [userToken], references: [token])
   iEvent    InviteEvent @relation(fields: [iEventId], references: [eventId])
   createdAt DateTime    @default(now())

@@ -172,11 +172,18 @@ Vote in an Invite Event. There are two endpoints for positive and negative votes
 
 # API Documentation (v2)
 
-Will be written when there is enough of a difference from v1
+Will be written when I get the motivation to do so
 
 # Updates
 
-## 1.1.1 
+## 2.0.0 (Breaking)
+
+- Switch to password-based login
+- Change authentication so that it is now a middleware
+- Add necessary Discord user data on register
+- End time is now an actual date, so that clients can easily display time till the end of an IEvent
+
+## 1.1.1
 
 - Fix multiple users not being able to vote for a user
 - Better output
