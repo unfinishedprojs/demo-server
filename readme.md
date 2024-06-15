@@ -176,6 +176,10 @@ Will be written when I get the motivation to do so
 
 # Updates
 
+## 2.0.2
+
+- Vaporize some console logging
+
 ## 2.0.1
 
 - Added Admin authentication

@@ -113,13 +113,7 @@ export const login = async (req: Request, res: Response) => {
       return res.status(403).json({ error: "No user with that Discord ID!" });
     }
 
-    console.log(user.token);
-
-    console.log(password);
-
     const ror = await argon2.verify(user.token, password);
-
-    console.log(ror);
 
     if (!ror) {
       return res.status(403).json({ error: "Password or username is incorrect" });
