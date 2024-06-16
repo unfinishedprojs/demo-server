@@ -8,7 +8,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
         return res.status(403).json({ error: 'No token provided!' });
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    jwt.verify(token, env.private as string, (err, decoded: any) => {
+    jwt.verify(token, env.PRIVATE as string, (err, decoded: any) => {
         if (err) {
             return res.status(401).send({ error: 'Unauthorized!' });
         }
@@ -24,7 +24,7 @@ export const verifyAdminToken = (req: Request, res: Response, next: NextFunction
         return res.status(403).json({ error: 'No token provided' });
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    jwt.verify(token as string, env.private as string, (err, decoded: any) => {
+    jwt.verify(token as string, env.PRIVATE as string, (err, decoded: any) => {
         if (err) {
             return res.status(401).send({ error: 'Unauthorized!' });
         }

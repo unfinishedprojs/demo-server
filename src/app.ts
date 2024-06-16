@@ -25,8 +25,8 @@ export const env = process.env;
 
 const app: Application = express();
 
-const file = fs.readFileSync(__dirname + "/swagger/swagger.yml", "utf8");
-const swaggerDocument = yaml.parse(file);
+// const file = fs.readFileSync(__dirname + "/swagger/swagger.yml", "utf8");
+// const swaggerDocument = yaml.parse(file);
 
 export const client = new Client({ auth: env.BOT_AUTH });
 
@@ -46,7 +46,7 @@ app.use("/api/v2/users", userRoutesV2);
 app.use("/api/v2/ievents", iEventRoutesV2);
 app.use("/api/v2/admin", adminRoutesV2);
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(morgan("dev"));
 
 app.get("/", (req: Request, res: Response) => {

@@ -1,3 +1,7 @@
+## 2.0.7
+
+- Completed automatic deployment
+
 ## 2.0.6
 
 - Add v2 documentation

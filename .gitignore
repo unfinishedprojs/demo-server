@@ -5,3 +5,5 @@ prisma/migrations
 prisma/dev.db
 pnpm-lock.yaml
 dist
+ecosystem.config.js
+.ecosystem.config.js.swp
