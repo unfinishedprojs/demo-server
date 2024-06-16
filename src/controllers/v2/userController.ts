@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 import { env } from "../../app";
 
 export const getUser = async (req: Request, res: Response) => {
-  const user = await getUserViaId(req.body.discordId);
+  const user = await getUserViaId(req.body.id);
 
   return res.status(200).json({
     discordId: user.discordId,

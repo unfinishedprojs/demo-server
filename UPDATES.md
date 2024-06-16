@@ -1,3 +1,7 @@
+## 2.1.2
+
+- Fix endpoint to grab user info
+
 ## 2.1.1
 
 - Add logic to check if, when a user suggests another, an event is ongoing or the suggested user already got invited. If either of these are true, reject the suggestion
