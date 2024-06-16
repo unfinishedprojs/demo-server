@@ -28,9 +28,9 @@ export const suggest = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "DiscordId not a string" });
     }
 
-    let votedIn: boolean = false;
+    let votedIn = false;
 
-    let activeOngoing: boolean = false;
+    let activeOngoing = false;
 
     (await findIEventById(discordId)).forEach((event) => {
       if (event.ended === true && event.positiveVotesInt > event.negativeVotesInt) votedIn = true;
