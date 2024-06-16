@@ -7,3 +7,4 @@ pnpm-lock.yaml
 dist
 ecosystem.config.js
 .ecosystem.config.js.swp
+ecosystem.config.js.save

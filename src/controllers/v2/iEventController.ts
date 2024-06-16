@@ -10,6 +10,7 @@ import {
   getAllIEvent,
   deleteCEvent,
   findIEvent,
+  findIEventById,
 } from "../../services/v2/iEventService";
 import { DatabaseError } from "../../errors/DatabaseError";
 import { createInvite } from "../../services/v2/inviteService";
@@ -25,6 +26,23 @@ export const suggest = async (req: Request, res: Response) => {
 
     if (typeof discordId !== "string") {
       return res.status(401).json({ error: "DiscordId not a string" });
+    }
+
+    let votedIn: boolean = false;
+
+    let activeOngoing: boolean = false;
+
+    (await findIEventById(discordId)).forEach((event) => {
+      if (event.ended === true && event.positiveVotesInt > event.negativeVotesInt) votedIn = true;
+      if (event.ended === false) activeOngoing = true;
+    });
+
+    if (votedIn) {
+      return res.status(406).json({ error: "This user was already voted in!" });
+    }
+
+    if (activeOngoing) {
+      return res.status(406).json({ error: "This user already has an ongoing vote" });
     }
 
     if ((await findCVote(discordId, req.body.password))?.userToken) {
