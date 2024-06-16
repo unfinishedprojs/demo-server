@@ -25,7 +25,7 @@ const app: Application = express();
 // const file = fs.readFileSync(__dirname + "/swagger/swagger.yml", "utf8");
 // const swaggerDocument = yaml.parse(file);
 
-export const client = new Client({ auth: env.BOT_AUTH });
+export const client = new Client({ auth: env.bot_auth });
 
 app.use(cors());
 app.use(helmet());

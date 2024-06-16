@@ -10,7 +10,7 @@ Democracy Server Voting Infra: backend
 
 ## TODO
 
-- [ ] When CEvent is finished, check if IEvent already exists. If it does, check if it ended. If it ended and is positive, do not allow new CEvents for user. If it ended and is negative, allow new CEvents for user
+- [X] When CEvent is finished, check if IEvent already exists. If it does, check if it ended. If it ended and is positive, do not allow new CEvents for user. If it ended and is negative, allow new CEvents for user
 - [ ] Tie Invites so that you have to use a specific ID with that Invite (currently not implemented so that everyone can debug their program)
 - [ ] Add administrator endpoints
 

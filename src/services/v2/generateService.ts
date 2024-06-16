@@ -9,5 +9,12 @@ export function fromBase64(string: string) {
 }
 
 export async function getDiscordData(id: string) {
-  return await client.rest.users.get(id)
+  return await client.rest.users.get(id);
+}
+
+export function formatDateInTimeZone(date: Date, timeZone: string, options?: Intl.DateTimeFormatOptions): string {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    ...(options || {}),
+  }).format(date);
 }

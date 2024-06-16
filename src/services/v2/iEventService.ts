@@ -2,6 +2,7 @@ import { prisma } from "../../prisma/client";
 import { DatabaseError } from "../../errors/DatabaseError";
 import { getDiscordData } from "./generateService";
 import { InviteEvent } from "@prisma/client";
+import { client, env } from "../../app";
 
 export async function createCEvent(discordId: string, token: string) {
   if (await findCEvent(discordId)) return await voteCEvent(discordId, token);
@@ -263,11 +264,21 @@ export async function checkAndUpdateEventStatus() {
   for (const event of inviteEvents) {
     const eventEndTime = new Date(event.endsAt);
 
-    if (currentTime >= eventEndTime) {
-      await prisma.inviteEvent.update({
-        where: { eventId: event.eventId },
-        data: { ended: true },
-      });
+    const webhook = await client.rest.webhooks.get("1252005020820307999", env.WEBHOOKTOKEN);
+
+    if (currentTime > eventEndTime) {
+      try {
+        await prisma.inviteEvent.update({
+          where: { eventId: event.eventId },
+          data: { ended: true },
+        });
+
+        if (event.positiveVotesInt > event.negativeVotesInt) {
+          webhook.execute({ content: `User <@${event.discordId}> got invited. Their invite is \`${event.invite}\`` });
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 }

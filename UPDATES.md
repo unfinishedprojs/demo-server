@@ -1,3 +1,7 @@
+## 2.1.4
+
+- Add webhook to notify admins of new users
+
 ## 2.1.3
 
 - Add checks to send any admin info necessary in get iEvent
