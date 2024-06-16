@@ -187,7 +187,6 @@ export const getIEvent = async (req: Request, res: Response) => {
       ended: result.ended,
       createdAt: result.createdAt,
       endsAt: result.endsAt,
-      duration: result.duration,
       positiveVotesInt: result.positiveVotesInt,
       negativeVotesInt: result.negativeVotesInt,
     });

@@ -4,10 +4,10 @@ import { verifyToken } from "../../middleware/authentication";
 
 const router = Router();
 
-router.get("/", verifyToken, getUser);
+router.get("/", verifyToken, getUser);  // Documented
 
-router.post("/register", createUser);
+router.post("/register", createUser);   // Documented
 
-router.post("/login", login);
+router.post("/login", login);           // Documented
 
 export default router;

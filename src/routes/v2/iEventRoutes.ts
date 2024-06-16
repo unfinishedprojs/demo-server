@@ -10,14 +10,14 @@ import { verifyToken } from "../../middleware/authentication";
 
 const router = Router();
 
-router.get("/", verifyToken, getIEvents); // Get all active invite events pls tyvm
-router.get("/get", verifyToken, getIEvent);
+router.get("/getall", verifyToken, getIEvents); // Documented
+router.get("/get", verifyToken, getIEvent);     // Documented
 
-router.post("/suggest", verifyToken, suggest);
+router.post("/suggest", verifyToken, suggest);  // Documented
 
 // Voting on active IEvents
 
-router.post("/vote/positive", verifyToken, votePositive);
-router.post("/vote/negative", verifyToken, voteNegative);
+router.post("/vote/positive", verifyToken, votePositive); // Documented
+router.post("/vote/negative", verifyToken, voteNegative); // Documented
 
 export default router;

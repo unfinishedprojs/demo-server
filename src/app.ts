@@ -50,7 +50,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(morgan("dev"));
 
 app.get("/", (req: Request, res: Response) => {
-  res.send({ message: "API is running without irregular faults!", version: version });
+  res.send({ message: "API is running!", version: version }); // Documented
 });
 
 client.on("ready", async () => {
