@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from "express";
+import { version } from "../package.json";
 
 // v1 Imports
 import userRoutesV1 from "./routes/v1/userRoutes";
@@ -49,7 +50,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(morgan("dev"));
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("API is running...");
+  res.send({ message: "API is running without irregular faults!", version: version });
 });
 
 client.on("ready", async () => {

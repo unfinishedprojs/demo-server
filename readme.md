@@ -176,6 +176,10 @@ Will be written when I get the motivation to do so
 
 # Updates
 
+## 2.0.5
+
+- New endpoint to check version
+
 ## 2.0.4
 
 - Hopefully patch CEvents taking too many votes to create
