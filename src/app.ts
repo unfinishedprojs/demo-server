@@ -11,13 +11,10 @@ import userRoutesV2 from "./routes/v2/userRoutes";
 import iEventRoutesV2 from "./routes/v2/iEventRoutes";
 import adminRoutesV2 from "./routes/v2/adminRoutes";
 
-import swaggerUi from "swagger-ui-express";
 import { ActivityTypes, BotCustomActivity, Client } from "oceanic.js";
 import cron from "node-cron";
 import morgan from "morgan";
-import yaml from "yaml";
-import fs from "fs";
-import { checkAndUpdateEventStatus } from "./services/v1/iEventService";
+import { checkAndUpdateEventStatus } from "./services/v2/iEventService";
 import cors from "cors";
 import helmet from 'helmet';
 

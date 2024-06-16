@@ -1,3 +1,8 @@
+## 2.0.8
+
+- Change runtime of a vote to 24h
+- Patch bug where votes went on for 1 minute only (??)
+
 ## 2.0.7
 
 - Completed automatic deployment

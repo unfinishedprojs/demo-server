@@ -121,7 +121,7 @@ export async function createIEvent(
         discordId: discordId,
         invite: invite,
         duration: duration,
-        endsAt: new Date((new Date()).getTime() + (60 * 60 * 1000)),
+        endsAt: new Date((new Date()).getTime() + (60 * 60 * 24 * 1000)),
         ended: false,
         positiveVotesInt: 0,
         negativeVotesInt: 0,
@@ -256,8 +256,8 @@ export async function checkAndUpdateEventStatus() {
 
   const inviteEvents = await prisma.inviteEvent.findMany({
     where: {
-      ended: false,
-    },
+      ended: false
+    }
   });
 
   for (const event of inviteEvents) {
