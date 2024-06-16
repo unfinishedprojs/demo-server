@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx ts-node src/server.ts",
+    "build": "npx tsc -b",
     "migrate": "npx prisma migrate dev --name init"
   },
   "keywords": [],
