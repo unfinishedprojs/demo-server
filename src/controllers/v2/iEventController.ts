@@ -27,6 +27,10 @@ export const suggest = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "DiscordId not a string" });
     }
 
+    if ((await findCVote(discordId, req.body.password))?.userToken) {
+      return res.status(406).json({ error: "Vote already cast. Ignored" });
+    }
+
     if (((await countCVote(discordId)) as number + 1) >= 2) {
       await deleteCEvent(discordId);
       const invite = await createInvite(discordId);
@@ -45,10 +49,6 @@ export const suggest = async (req: Request, res: Response) => {
         duration: result.duration,
         ended: result.ended,
       } as EventRes);
-    }
-
-    if ((await findCVote(discordId, req.body.password))?.createdAt) {
-      return res.status(406).json({ error: "Vote already cast. Ignored" });
     }
 
     const result = await createCEvent(discordId, req.body.password);

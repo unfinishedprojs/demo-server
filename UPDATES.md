@@ -1,3 +1,7 @@
+## 2.1.0
+
+- Fix logic that allowed someone to vote twice (oops!)
+
 ## 2.0.9
 
 - Fix really goofy error
