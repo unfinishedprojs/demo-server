@@ -1,3 +1,7 @@
+## 2.1.3
+
+- Add checks to send any admin info necessary in get iEvent
+
 ## 2.1.2
 
 - Fix endpoint to grab user info

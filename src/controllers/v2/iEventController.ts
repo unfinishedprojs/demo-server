@@ -182,6 +182,7 @@ export const getIEvents = async (req: Request, res: Response) => {
 export const getIEvent = async (req: Request, res: Response) => {
   try {
     const { eventId } = req.query;
+    const { admin } = req.body;
 
     if (!eventId) {
       return res.status(400).json({ error: "EventID missing" });
@@ -193,8 +194,13 @@ export const getIEvent = async (req: Request, res: Response) => {
 
     const result = await findIEvent(eventId as string);
 
+    let invite: string | undefined = undefined;
+
+    if (admin === true) invite = result.invite;
+
     return res.status(200).json({
       eventId: result.eventId,
+      invite: invite,
       discordId: result.discordId,
       discordUser: result.discordUser,
       discordPfpUrl: result.discordPfpUrl,
