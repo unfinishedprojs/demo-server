@@ -13,7 +13,7 @@ import {
 } from "../../services/v2/iEventService";
 import { DatabaseError } from "../../errors/DatabaseError";
 import { createInvite } from "../../services/v2/inviteService";
-import { ApiResponse, EventRes } from "../../models/interfaces";
+import { EventRes } from "../../models/interfaces";
 
 export const suggest = async (req: Request, res: Response) => {
   try {
@@ -38,16 +38,13 @@ export const suggest = async (req: Request, res: Response) => {
       );
 
       return res.status(200).json({
-        status: 200,
-        response: {
-          eventId: result.eventId,
-          discordId: result.discordId,
-          createdAt: result.createdAt,
-          endsAt: result.endsAt,
-          duration: result.duration,
-          ended: result.ended,
-        } as EventRes,
-      } as ApiResponse);
+        eventId: result.eventId,
+        discordId: result.discordId,
+        createdAt: result.createdAt,
+        endsAt: result.endsAt,
+        duration: result.duration,
+        ended: result.ended,
+      } as EventRes);
     }
 
     if ((await findCVote(discordId, req.body.password))?.createdAt) {

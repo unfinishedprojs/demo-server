@@ -1,3 +1,8 @@
+## 2.0.9
+
+- Fix really goofy error
+- Changed `/api/v2/users` to `/api/v2/users/get`
+
 ## 2.0.8
 
 - Change runtime of a vote to 24h

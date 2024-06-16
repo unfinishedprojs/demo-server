@@ -4,7 +4,7 @@ import { verifyToken } from "../../middleware/authentication";
 
 const router = Router();
 
-router.get("/", verifyToken, getUser);  // Documented
+router.get("/get", verifyToken, getUser);  // Documented
 
 router.post("/register", createUser);   // Documented
 
