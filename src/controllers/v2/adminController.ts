@@ -12,7 +12,7 @@ export const createInvites = async (req: Request, res: Response) => {
     for (let index = 0; index < Number(quantity); index++) {
       const invite = await createInvite();
 
-      invites.push(invite.invite);
+      invites.push(`https://demo.samu.lol/#/register?invite=${invite.invite}`);
     }
 
     res.status(201).json({ invites });

@@ -1,3 +1,8 @@
+## 2.1.5
+
+- Facilitate creating invites
+- Change channel ID for invites to correct one
+
 ## 2.1.4
 
 - Add webhook to notify admins of new users

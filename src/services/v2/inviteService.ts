@@ -4,7 +4,7 @@ import { DatabaseError } from "../../errors/DatabaseError";
 
 export async function createInvite(discordId?: string) {
   const invite = await client.rest.channels.createInvite(
-    "1247883904866844673",
+    "1245478731313582123",
     { maxUses: 1, unique: true },
   );
 
