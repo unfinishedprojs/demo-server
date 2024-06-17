@@ -42,7 +42,7 @@ export async function createPasswordToken(
         invite: invite,
         token: hashedPass,
         iEventId: inviteEventID || undefined,
-        discordPfpUrl: userData.avatarURL("jpg"),
+        discordPfpUrl: userData.avatarURL(),
         discordSlug: userData.username,
         discordUser: userData.globalName
       },

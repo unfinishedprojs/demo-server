@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   getIEvent,
   getIEvents,
+  pollUser,
   suggest,
   voteNegative,
   votePositive,
@@ -13,7 +14,7 @@ const router = Router();
 router.get("/getall", verifyToken, getIEvents); // Documented
 router.get("/get", verifyToken, getIEvent);     // Documented
 
-router.post("/suggest", verifyToken, suggest);  // Documented
+router.post("/suggest", verifyToken, pollUser);  // Documented
 
 // Voting on active IEvents
 

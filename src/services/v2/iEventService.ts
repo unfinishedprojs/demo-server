@@ -296,3 +296,17 @@ export async function getAllIEvent(active: boolean | undefined) {
     throw new DatabaseError("Could not find all IEvents", error as Error);
   }
 }
+
+export async function getIEventArraySize(active: boolean | undefined) {
+  try {
+    const result = await prisma.inviteEvent.count({
+      where: {
+        ended: active,
+      },
+    });
+
+    return result as number;
+  } catch (error) {
+    throw new DatabaseError("Could not count IEvents", error as Error);
+  }
+}

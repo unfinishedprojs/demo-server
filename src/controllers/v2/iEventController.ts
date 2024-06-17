@@ -11,6 +11,7 @@ import {
   deleteCEvent,
   findIEvent,
   findIEventById,
+  getIEventArraySize,
 } from "../../services/v2/iEventService";
 import { DatabaseError } from "../../errors/DatabaseError";
 import { createInvite } from "../../services/v2/inviteService";
@@ -73,6 +74,68 @@ export const suggest = async (req: Request, res: Response) => {
     return res.status(200).json({
       discordId: result.discordId,
     });
+  } catch (error) {
+    if (error instanceof DatabaseError) {
+      console.error("Database error occurred:", error.cause);
+      res.status(500).json({ error: error.message });
+    } else {
+      console.error("Unexpected error:", error);
+      res.status(500).json({ error: "An unexpected error occurred" });
+    }
+  }
+};
+
+export const pollUser = async (req: Request, res: Response) => {
+  const { discordId } = req.body;
+
+  try {
+    const eventNumber = await getIEventArraySize(true);
+
+    if (eventNumber >= 20) {
+      return res.status(422).json({ error: "Active event limit has been reached! Check back later" });
+    }
+
+    if (!discordId) {
+      return res.status(400).json({ error: "DiscordId missing" });
+    }
+
+    if (typeof discordId !== "string") {
+      return res.status(401).json({ error: "DiscordId not a string" });
+    }
+
+    let votedIn = false;
+
+    let activeOngoing = false;
+
+    (await findIEventById(discordId)).forEach((event) => {
+      if (event.ended === true && event.positiveVotesInt > event.negativeVotesInt) votedIn = true;
+      if (event.ended === false) activeOngoing = true;
+    });
+
+    if (votedIn) {
+      return res.status(406).json({ error: "This user was already voted in!" });
+    }
+
+    if (activeOngoing) {
+      return res.status(406).json({ error: "This user already has an ongoing vote" });
+    }
+
+    const invite = await createInvite(discordId);
+    const result = await createIEvent(
+      (Math.random() * 10).toString(36).replace(".", ""),
+      discordId,
+      invite.invite,
+      Number(process.env.IDURATION)
+    );
+
+    return res.status(200).json({
+      eventId: result.eventId,
+      discordId: result.discordId,
+      createdAt: result.createdAt,
+      endsAt: result.endsAt,
+      duration: result.duration,
+      ended: result.ended,
+    } as EventRes);
   } catch (error) {
     if (error instanceof DatabaseError) {
       console.error("Database error occurred:", error.cause);
@@ -153,6 +216,7 @@ export const voteNegative = async (req: Request, res: Response) => {
 export const getIEvents = async (req: Request, res: Response) => {
   try {
     const { active } = req.query;
+    const { password } = req.body;
 
     let isActive: boolean | undefined = /^true$/i.test(active as string);
 
@@ -182,7 +246,7 @@ export const getIEvents = async (req: Request, res: Response) => {
 export const getIEvent = async (req: Request, res: Response) => {
   try {
     const { eventId } = req.query;
-    const { admin } = req.body;
+    const { admin, password } = req.body;
 
     if (!eventId) {
       return res.status(400).json({ error: "EventID missing" });
@@ -194,11 +258,14 @@ export const getIEvent = async (req: Request, res: Response) => {
 
     const result = await findIEvent(eventId as string);
 
+    const voted = await iEventVoted(eventId, password);
+
     let invite: string | undefined = undefined;
 
     if (admin === true) invite = result.invite;
 
     return res.status(200).json({
+      voted: voted,
       eventId: result.eventId,
       invite: invite,
       discordId: result.discordId,

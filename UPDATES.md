@@ -1,3 +1,9 @@
+## 2.1.6
+
+- Replace getting profile pictures as jpgs to whatever Discord gives by default
+- Change limit for poll creation to 1 user, and now only 20 polls can exist at a time
+- When fetching a poll, return if a user has already voted on that poll or not
+
 ## 2.1.5
 
 - Facilitate creating invites
