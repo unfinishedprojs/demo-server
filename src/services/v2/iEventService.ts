@@ -3,6 +3,7 @@ import { DatabaseError } from "../../errors/DatabaseError";
 import { getDiscordData } from "./generateService";
 import { InviteEvent } from "@prisma/client";
 import { client, env } from "../../app";
+import { AnyTextableGuildChannel, Message } from "oceanic.js";
 
 export async function createCEvent(discordId: string, token: string) {
   if (await findCEvent(discordId)) return await voteCEvent(discordId, token);
@@ -113,6 +114,48 @@ export async function createIEvent(
   try {
     const user = await getDiscordData(discordId);
 
+    console.log(eventId, discordId, invite);
+
+    const webhook = await client.rest.webhooks.get("1252368511951437846", env.NEWPOLLWEBHOOKTOKEN);
+
+    const message: Message<AnyTextableGuildChannel> = await webhook.execute<AnyTextableGuildChannel>({
+      wait: true,
+      content: `New poll!`,
+      username: "Democracy Shiggy",
+      avatarURL: "https://cdn.discordapp.com/avatars/1245513506758066231/a_693566f5bf8e6373cc8d46e5dc9d33d1.gif",
+      embeds: [
+        {
+          title: `New poll has been created for ${user.username}`,
+          description: `<@${user.id}> has been suggested enough for a poll to be created. Go vote!`,
+          url: `https://demo.samu.lol/#/vote/${eventId}`,
+          color: 12082943,
+          fields: [
+            {
+              name: "Poll page",
+              value: `https://demo.samu.lol/#/vote/${eventId}`
+            },
+            {
+              name: "Positive votes",
+              value: "0",
+              inline: true
+            },
+            {
+              name: "Negative votes",
+              value: "0",
+              inline: true
+            }
+          ],
+          author: {
+            name: "Demo-Server",
+            url: "https://demo.samu.lol"
+          },
+          thumbnail: {
+            url: user.avatarURL()
+          }
+        }
+      ],
+    }, env.NEWPOLLWEBHOOKTOKEN);
+
     const result = await prisma.inviteEvent.create({
       data: {
         eventId: eventId,
@@ -121,6 +164,7 @@ export async function createIEvent(
         discordPfpUrl: user.avatarURL(),
         discordId: discordId,
         invite: invite,
+        webhookMessageId: message.id,
         duration: duration,
         endsAt: new Date((new Date()).getTime() + (60 * 60 * 24 * 1000)),
         ended: false,
@@ -186,7 +230,7 @@ export async function iEventVotePos(eventId: string, token: string) {
       },
     });
 
-    await prisma.inviteEvent.update({
+    const event = await prisma.inviteEvent.update({
       where: { eventId },
       data: {
         positiveVotesInt: {
@@ -194,6 +238,47 @@ export async function iEventVotePos(eventId: string, token: string) {
         },
       },
     });
+
+    if (event.webhookMessageId) {
+      const webhook = await client.rest.webhooks.get("1252368511951437846", env.NEWPOLLWEBHOOKTOKEN);
+
+      const message = await webhook.getMessage(event.webhookMessageId as string, undefined, env.NEWPOLLWEBHOOKTOKEN);
+
+      const webhookMessage = await message.editWebhook(env.NEWPOLLWEBHOOKTOKEN as string, {
+        content: `New poll!`,
+        embeds: [
+          {
+            title: `New poll has been created for ${event.discordSlug}`,
+            description: `<@${event.discordId}> has been suggested enough for a poll to be created. Go vote!`,
+            url: `https://demo.samu.lol/#/vote/${eventId}`,
+            color: 12082943,
+            fields: [
+              {
+                name: "Poll page",
+                value: `https://demo.samu.lol/#/vote/${eventId}`
+              },
+              {
+                name: "Positive votes",
+                value: String(event.positiveVotesInt),
+                inline: true
+              },
+              {
+                name: "Negative votes",
+                value: String(event.negativeVotesInt),
+                inline: true
+              }
+            ],
+            author: {
+              name: "Demo-Server",
+              url: "https://demo.samu.lol"
+            },
+            thumbnail: {
+              url: event.discordPfpUrl as string
+            }
+          }
+        ],
+      });
+    }
 
     return result;
   } catch (error) {
@@ -210,7 +295,7 @@ export async function iEventVoteNeg(eventId: string, token: string) {
       },
     });
 
-    await prisma.inviteEvent.update({
+    const event = await prisma.inviteEvent.update({
       where: { eventId },
       data: {
         negativeVotesInt: {
@@ -218,6 +303,47 @@ export async function iEventVoteNeg(eventId: string, token: string) {
         },
       },
     });
+
+    if (event.webhookMessageId) {
+      const webhook = await client.rest.webhooks.get("1252368511951437846", env.NEWPOLLWEBHOOKTOKEN);
+
+      const message = await webhook.getMessage(event.webhookMessageId as string, undefined, env.NEWPOLLWEBHOOKTOKEN);
+
+      const webhookMessage = await message.editWebhook(env.NEWPOLLWEBHOOKTOKEN as string, {
+        content: `New poll!`,
+        embeds: [
+          {
+            title: `New poll has been created for ${event.discordSlug}`,
+            description: `<@${event.discordId}> has been suggested enough for a poll to be created. Go vote!`,
+            url: `https://demo.samu.lol/#/vote/${eventId}`,
+            color: 12082943,
+            fields: [
+              {
+                name: "Poll page",
+                value: `https://demo.samu.lol/#/vote/${eventId}`
+              },
+              {
+                name: "Positive votes",
+                value: String(event.positiveVotesInt),
+                inline: true
+              },
+              {
+                name: "Negative votes",
+                value: String(event.negativeVotesInt),
+                inline: true
+              }
+            ],
+            author: {
+              name: "Demo-Server",
+              url: "https://demo.samu.lol"
+            },
+            thumbnail: {
+              url: event.discordPfpUrl as string
+            }
+          }
+        ],
+      });
+    }
 
     return result;
   } catch (error) {

@@ -215,15 +215,15 @@ export const voteNegative = async (req: Request, res: Response) => {
 
 export const getIEvents = async (req: Request, res: Response) => {
   try {
-    const { active } = req.query;
+    const { ended } = req.query;
     const { password } = req.body;
 
-    let isActive: boolean | undefined = /^true$/i.test(active as string);
+    let hasEnded: boolean | undefined = /^true$/i.test(ended as string);
 
-    if (!active) isActive = undefined;
+    if (!ended) hasEnded = undefined;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let result: any = await getAllIEvent(isActive as boolean | undefined);
+    let result: any = await getAllIEvent(hasEnded as boolean | undefined);
 
     result = result.map((item: { [x: string]: unknown; invite: unknown; }) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

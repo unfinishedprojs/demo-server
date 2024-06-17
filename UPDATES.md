@@ -1,3 +1,9 @@
+## 2.1.7
+
+- Add admin endpoint to delete polls
+- Send webhook to notify of new polls
+- Reversed Active in GetAllEvents to Ended
+
 ## 2.1.6
 
 - Replace getting profile pictures as jpgs to whatever Discord gives by default
