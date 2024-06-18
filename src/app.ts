@@ -22,6 +22,8 @@ export const env = process.env;
 
 const app: Application = express();
 
+app.set('trust proxy', 1 /* number of proxies between user and server */);
+
 // const file = fs.readFileSync(__dirname + "/swagger/swagger.yml", "utf8");
 // const swaggerDocument = yaml.parse(file);
 

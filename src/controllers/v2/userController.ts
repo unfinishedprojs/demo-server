@@ -67,7 +67,10 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const result = await createPasswordToken(discordId, password, invite);
 
+    const token = jwt.sign({ id: result.discordId, password: result.token, admin: result.admin }, env.PRIVATE as string, { expiresIn: '24h' });
+
     return res.status(201).json({
+      token,
       discordId: result.discordId,
       admin: result.admin,
       discordUser: result.discordUser,

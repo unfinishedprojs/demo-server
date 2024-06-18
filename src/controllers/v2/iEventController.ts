@@ -222,14 +222,16 @@ export const getIEvents = async (req: Request, res: Response) => {
 
     if (!ended) hasEnded = undefined;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let result: any = await getAllIEvent(hasEnded as boolean | undefined);
 
-    result = result.map((item: { [x: string]: unknown; invite: unknown; }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { invite, ...rest } = item;
-      return rest;
-    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    result = await Promise.all(result.map(async (item: { [x: string]: unknown; invite: unknown; id: string; }) => {
+      const { invite, id, ...rest } = item;
+
+      const voted = await iEventVoted(id, password);
+
+      return { ...rest, voted };
+    }));
 
     return res.status(200).json({ events: result });
   } catch (error) {

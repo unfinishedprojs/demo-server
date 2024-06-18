@@ -1,3 +1,8 @@
+## 2.1.8
+
+- Add in all events grab "voted" to see if the user grabbing the data has voted on any of the polls or not
+- Send new token on register
+
 ## 2.1.7
 
 - Add admin endpoint to delete polls
