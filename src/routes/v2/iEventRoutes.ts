@@ -14,7 +14,9 @@ const router = Router();
 router.get("/getall", verifyToken, getIEvents); // Documented
 router.get("/get", verifyToken, getIEvent);     // Documented
 
-router.post("/suggest", verifyToken, pollUser);  // Documented
+router.post("/suggest", verifyToken, (req, res) => {
+  return res.status(403).json({ message: "Suggestions are paused temporarily!" });
+});  // Documented
 
 // Voting on active IEvents
 

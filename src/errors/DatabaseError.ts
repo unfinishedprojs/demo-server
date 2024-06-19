@@ -7,3 +7,10 @@ export class DatabaseError extends Error {
     this.cause = cause;
   }
 }
+
+export class BaseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "BaseError";
+  }
+}

@@ -10,6 +10,7 @@ import adminRoutesV1 from "./routes/v1/adminRoutes";
 import userRoutesV2 from "./routes/v2/userRoutes";
 import iEventRoutesV2 from "./routes/v2/iEventRoutes";
 import adminRoutesV2 from "./routes/v2/adminRoutes";
+import proxyRoutesV2 from "./routes/v2/proxyRoutes";
 
 import { ActivityTypes, BotCustomActivity, Client } from "oceanic.js";
 import cron from "node-cron";
@@ -44,6 +45,7 @@ app.use("/api/v1/admin", adminRoutesV1);
 app.use("/api/v2/users", userRoutesV2);
 app.use("/api/v2/ievents", iEventRoutesV2);
 app.use("/api/v2/admin", adminRoutesV2);
+app.use("/proxy/v2", proxyRoutesV2);
 
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(morgan("dev"));

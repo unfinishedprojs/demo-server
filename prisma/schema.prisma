@@ -91,3 +91,12 @@ model CreateVote {
 
   @@id([userToken, discordId])
 }
+
+model CustomRole {
+  discordId  String   @id
+  roleId     String   @unique
+  roleName   String   @unique
+  roleColour String
+  createdAt  DateTime @default(now())
+  editedAt   DateTime @default(now())
+}

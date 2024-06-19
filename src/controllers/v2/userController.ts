@@ -8,15 +8,25 @@ import jwt from 'jsonwebtoken';
 import { env } from "../../app";
 
 export const getUser = async (req: Request, res: Response) => {
-  const user = await getUserViaId(req.body.id);
+  try {
+    const user = await getUserViaId(req.body.id);
 
-  return res.status(200).json({
-    discordId: user.discordId,
-    admin: user.admin,
-    discordUser: user.discordUser,
-    discordSlug: user.discordSlug,
-    discordPfpUrl: user.discordPfpUrl,
-  } as LoginRes);
+    return res.status(200).json({
+      discordId: user.discordId,
+      admin: user.admin,
+      discordUser: user.discordUser,
+      discordSlug: user.discordSlug,
+      discordPfpUrl: user.discordPfpUrl,
+    } as LoginRes);
+  } catch (error) {
+    if (error instanceof DatabaseError) {
+      console.error("Database error occurred:", error.cause);
+      res.status(500).json({ error: error.message });
+    } else {
+      console.error("Unexpected error:", error);
+      res.status(500).json({ error: "An unexpected error occurred" });
+    }
+  }
 };
 
 export const createUser = async (req: Request, res: Response) => {

@@ -18,3 +18,11 @@ export function formatDateInTimeZone(date: Date, timeZone: string, options?: Int
     ...(options || {}),
   }).format(date);
 }
+
+export function hexToDecimals(hex: string) {
+  return parseInt(hex, 16);
+}
+
+export function decimalsToHex(decimal: number) {
+  return decimal.toString(16);
+};

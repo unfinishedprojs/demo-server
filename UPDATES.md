@@ -1,3 +1,7 @@
+## 2.1.9
+
+- Add custom role creation endpoints (to be documented)
+
 ## 2.1.8
 
 - Add in all events grab "voted" to see if the user grabbing the data has voted on any of the polls or not
