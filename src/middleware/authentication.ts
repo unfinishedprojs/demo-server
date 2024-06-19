@@ -29,7 +29,7 @@ export const verifyAdminToken = (req: Request, res: Response, next: NextFunction
         if (err) {
             return res.status(401).send({ error: 'Unauthorized!' });
         }
-        if (decoded?.admin === false) {
+        if (decoded?.admin === false || decoded?.admin === null) {
             return res.status(401).send({ error: 'Unauthorized!' });
         }
         req.body.id = decoded?.id;

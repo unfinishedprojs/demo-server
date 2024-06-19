@@ -1,3 +1,8 @@
+## 2.2.0
+
+- Fix vulnerability (Thanks @roz)
+- Fix empty error when suggesting is disabled
+
 ## 2.1.9
 
 - Add custom role creation endpoints (to be documented)

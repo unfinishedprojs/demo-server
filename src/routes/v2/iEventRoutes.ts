@@ -2,8 +2,6 @@ import { Router } from "express";
 import {
   getIEvent,
   getIEvents,
-  pollUser,
-  suggest,
   voteNegative,
   votePositive,
 } from "../../controllers/v2/iEventController";
@@ -15,7 +13,7 @@ router.get("/getall", verifyToken, getIEvents); // Documented
 router.get("/get", verifyToken, getIEvent);     // Documented
 
 router.post("/suggest", verifyToken, (req, res) => {
-  return res.status(403).json({ message: "Suggestions are paused temporarily!" });
+  return res.status(403).json({ error: "Suggestions are paused temporarily!" });
 });  // Documented
 
 // Voting on active IEvents

@@ -28,7 +28,9 @@ export const getRole = async (req: Request, res: Response) => {
 };
 
 export const createRole = async (req: Request, res: Response) => {
-    const { roleColour, roleName, id } = req.body;
+    let { roleColour, roleName, id } = req.body;
+
+    roleColour = roleColour.replace('#', '');
 
     try {
         let exists = await getCustomRole(undefined, id);
@@ -48,12 +50,12 @@ export const createRole = async (req: Request, res: Response) => {
             const role = await createCustomRole(req.body.id, roleName, roleColour);
 
             return res.status(200).json({
-                roleColour: role?.roleColour,
-                roleName: role?.roleName,
-                roleId: role?.roleId,
-                discordId: role?.discordId,
-                createdAt: role?.createdAt,
-                editedAt: role?.editedAt
+                roleColour: role.roleColour,
+                roleName: role.roleName,
+                roleId: role.roleId,
+                discordId: role.discordId,
+                createdAt: role.createdAt,
+                editedAt: role.editedAt
             });
         }
     } catch (error) {
